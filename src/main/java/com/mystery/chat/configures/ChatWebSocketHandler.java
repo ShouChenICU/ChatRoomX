@@ -1,7 +1,9 @@
 package com.mystery.chat.configures;
 
-import com.alibaba.fastjson.JSON;
-import com.mystery.chat.vos.MessageVO;
+import com.mystery.chat.managers.ClientWebSocketSessionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -11,28 +13,42 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
  * @author shouchen
  * @date 2022/11/23
  */
+@Component
 public class ChatWebSocketHandler extends TextWebSocketHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatWebSocketHandler.class);
+    private final ClientWebSocketSessionManager sessionManager;
+
+    public ChatWebSocketHandler(ClientWebSocketSessionManager sessionManager) {
+        this.sessionManager = sessionManager;
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.err.println(session);
-        System.err.println(session.getTextMessageSizeLimit());
-        System.err.println(session.getBinaryMessageSizeLimit());
-        System.err.println(session.getId());
-        session.sendMessage(new TextMessage(JSON.toJSONString(new MessageVO()
-                .setId(123)
-                .setContent("hello"))));
+        sessionManager.putSession(session);
+        String msg = "Welcome " + session.getAttributes().get("name");
+        LOGGER.info(msg);
+        broadcastMsg(msg);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println(session.getId() + " closed");
+        String msg = session.getAttributes().get("name") + " closed";
+        LOGGER.info(msg);
+        sessionManager.removeSession(session);
+        broadcastMsg(msg);
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.err.println(session.getAttributes());
+        broadcastMsg(session.getAttributes().get("name") + ":\n" + message.getPayload());
+    }
 
-        System.err.println(message.getPayload());
+    private void broadcastMsg(String msg) throws Exception {
+        TextMessage echo = new TextMessage(msg);
+        for (WebSocketSession s : sessionManager.getSessions()) {
+            if (s.isOpen()) {
+                s.sendMessage(echo);
+            }
+        }
     }
 }
