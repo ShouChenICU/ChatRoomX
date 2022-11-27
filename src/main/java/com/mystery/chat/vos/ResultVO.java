@@ -5,7 +5,9 @@ package com.mystery.chat.vos;
  * @date 2022/11/25
  */
 public class ResultVO<T> {
-    private int status;
+    private static final int OK = 200;
+    private static final int ERR = 500;
+    private int code;
     private String type;
     private String error;
     private T result;
@@ -14,23 +16,23 @@ public class ResultVO<T> {
     }
 
     public static <T> ResultVO<T> of(T result) {
-        return new ResultVO<T>().setResult(result).setStatus(200);
+        return new ResultVO<T>().setResult(result).setCode(OK);
     }
 
-    public static <T> ResultVO<T> empty() {
-        return new ResultVO<T>().setStatus(200);
+    public static <T> ResultVO<T> success() {
+        return new ResultVO<T>().setCode(OK);
     }
 
     public static <T> ResultVO<T> error(String msg) {
-        return new ResultVO<T>().setError(msg).setStatus(500);
+        return new ResultVO<T>().setError(msg).setCode(ERR);
     }
 
-    public int getStatus() {
-        return status;
+    public int getCode() {
+        return code;
     }
 
-    public ResultVO<T> setStatus(int status) {
-        this.status = status;
+    public ResultVO<T> setCode(int code) {
+        this.code = code;
         return this;
     }
 

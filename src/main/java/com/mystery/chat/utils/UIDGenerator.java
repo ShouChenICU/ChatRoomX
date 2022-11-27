@@ -9,11 +9,11 @@ import java.util.Base64;
  * @author shouchen
  * @date 2022/11/24
  */
-public final class UidGenerator {
+public final class UIDGenerator {
     private static final String DIGEST_ALGORITHM = "MD5";
 
     /**
-     * 效果同以UUID第三版生成的16字节数据最后6字节转Base64相同
+     * 效果同以UUID第三版生成的16字节数据最后6字节转URL版Base64相同
      *
      * @param nameSpace 命名空间
      * @return UID

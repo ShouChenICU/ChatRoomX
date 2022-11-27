@@ -1,6 +1,6 @@
 package com.mystery.chat.configures;
 
-import com.mystery.chat.utils.UidGenerator;
+import com.mystery.chat.utils.UIDGenerator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -37,11 +37,12 @@ public class ChatWebSocketConfigure implements WebSocketConfigurer {
                 .addInterceptors(new HttpSessionHandshakeInterceptor() {
                     @Override
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+                        super.beforeHandshake(request, response, wsHandler, attributes);
                         HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
                         String name = servletRequest.getParameter("name");
                         attributes.put("name",
                                 name == null || name.trim().isEmpty() ?
-                                        "游客" + UidGenerator.fromNameSpace(String.valueOf(ThreadLocalRandom.current().nextInt()))
+                                        "游客" + UIDGenerator.fromNameSpace(String.valueOf(ThreadLocalRandom.current().nextInt()))
                                         : name);
                         return true;
                     }
