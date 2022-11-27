@@ -7,4 +7,8 @@ package com.mystery.chat.entities;
 public class MessageEntity {
     private long id;
     private String roomId;
+    private String sender;
+    private String type;
+    private String content;
+    private long instant;
 }

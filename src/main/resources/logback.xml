@@ -2,8 +2,8 @@
 <configuration scan="false" scanPeriod="60 seconds"
 	debug="false">
 	<property name="LOG_HOME" value="logs" />
-	<property name="LOG_pattern1" value="%d{yyyy-MM-dd HH:mm:ss} [%magenta(%t)] %highlight(%-5p) -> %m%n" />
-	<property name="LOG_pattern2" value="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p -> %m%n" />
+	<property name="LOG_pattern1" value="%d{yyyy-MM-dd HH:mm:ss} [%magenta(%t)] %highlight(%-5p) %logger{0}:%L -> %m%n" />
+	<property name="LOG_pattern2" value="%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %logger{0}:%L -> %m%n" />
 
 	<appender name="Console"
 		class="ch.qos.logback.core.ConsoleAppender">

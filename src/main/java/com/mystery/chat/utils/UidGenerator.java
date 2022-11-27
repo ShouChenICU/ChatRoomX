@@ -9,9 +9,15 @@ import java.util.Base64;
  * @author shouchen
  * @date 2022/11/24
  */
-public class IdGenerator {
+public final class UidGenerator {
     private static final String DIGEST_ALGORITHM = "MD5";
 
+    /**
+     * 效果同以UUID第三版生成的16字节数据最后6字节转Base64相同
+     *
+     * @param nameSpace 命名空间
+     * @return UID
+     */
     public static String fromNameSpace(String nameSpace) {
         try {
             MessageDigest digest = MessageDigest.getInstance(DIGEST_ALGORITHM);

@@ -9,6 +9,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
+
 /**
  * @author shouchen
  * @date 2022/11/23
@@ -45,6 +47,15 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     private void broadcastMsg(String msg) throws Exception {
         TextMessage echo = new TextMessage(msg);
+//        sessionManager.getSessionMap().forEach((key, value) -> {
+//            try {
+//                if(value.isOpen()) {
+//                    value.sendMessage(echo);
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        });
         for (WebSocketSession s : sessionManager.getSessions()) {
             if (s.isOpen()) {
                 s.sendMessage(echo);

@@ -39,4 +39,8 @@ public class ClientWebSocketSessionManager {
             return new ArrayList<>(sessionMap.values());
         }
     }
+
+    public Map<String, WebSocketSession> getSessionMap() {
+        return sessionMap;
+    }
 }

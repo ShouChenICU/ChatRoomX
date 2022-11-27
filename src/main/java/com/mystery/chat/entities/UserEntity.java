@@ -10,4 +10,5 @@ public class UserEntity {
     private String nickname;
     private String password;
     private String gender;
+    private long createInstant;
 }

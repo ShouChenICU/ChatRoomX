@@ -1,6 +1,6 @@
 package com.mystery.chat.configures;
 
-import com.mystery.chat.utils.IdGenerator;
+import com.mystery.chat.utils.UidGenerator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -41,7 +41,7 @@ public class ChatWebSocketConfigure implements WebSocketConfigurer {
                         String name = servletRequest.getParameter("name");
                         attributes.put("name",
                                 name == null || name.trim().isEmpty() ?
-                                        "游客" + IdGenerator.fromNameSpace(String.valueOf(ThreadLocalRandom.current().nextInt()))
+                                        "游客" + UidGenerator.fromNameSpace(String.valueOf(ThreadLocalRandom.current().nextInt()))
                                         : name);
                         return true;
                     }
