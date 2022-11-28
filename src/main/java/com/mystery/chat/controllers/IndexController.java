@@ -1,24 +1,15 @@
 package com.mystery.chat.controllers;
 
 import com.mystery.chat.vos.ResultVO;
-import com.sun.net.httpserver.HttpContext;
-import org.apache.tomcat.util.descriptor.web.ContextEnvironment;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.annotation.HttpConstraint;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -31,11 +22,6 @@ public class IndexController implements ErrorController {
 
     @GetMapping("/")
     public String indexPage(HttpServletResponse response) {
-
-        System.out.println(
-                SecurityContextHolder.getContext().getAuthentication()
-        );
-
         return "chatroom.html";
     }
 

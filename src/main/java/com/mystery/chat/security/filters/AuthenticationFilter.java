@@ -1,6 +1,5 @@
 package com.mystery.chat.security.filters;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +22,12 @@ public class AuthenticationFilter implements Filter {
 
         HttpServletRequest servletRequest = (HttpServletRequest) request;
         SecurityContextHolder.getContext().setAuthentication(
-                UsernamePasswordAuthenticationToken.authenticated("",
+                UsernamePasswordAuthenticationToken.authenticated("smr",
                         "",
-                        AuthorityUtils.createAuthorityList("authority.user.delete"))
+                        AuthorityUtils.createAuthorityList("ROLE_ADMIN"))
         );
+
+//        response.getWriter().write(JSON.toJSONString(ResultVO.error(HttpStatus.UNAUTHORIZED.toString()).setCode(HttpStatus.UNAUTHORIZED.value())));
 
         chain.doFilter(request, response);
     }
