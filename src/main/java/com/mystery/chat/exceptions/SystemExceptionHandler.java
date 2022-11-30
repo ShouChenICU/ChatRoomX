@@ -4,9 +4,11 @@ import com.mystery.chat.vos.ResultVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -58,6 +60,28 @@ public class SystemExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public void httpRequestMethodNotSupportedExceptionHandle(HttpServletRequest request) {
         LOGGER.warn("Not support " + request.getMethod() + " " + request.getRequestURI());
+    }
+
+    /**
+     * 需要请求体
+     *
+     * @param request 请求
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResultVO<?> httpMessageNotReadableExceptionHandle(HttpServletRequest request, HttpMessageNotReadableException exception) {
+        LOGGER.warn("{} {}", request.getMethod(), request.getRequestURI(), exception);
+        return ResultVO.error(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+    }
+
+    /**
+     * 参数绑定异常
+     *
+     * @param request 请求
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResultVO<?> methodArgumentNotValidExceptionHandle(HttpServletRequest request, MethodArgumentNotValidException exception) {
+        LOGGER.warn("{} {} {}", exception.getClass().getSimpleName(), request.getMethod(), request.getRequestURI(), exception);
+        return ResultVO.error("Validation failed for argument");
     }
 
     /**

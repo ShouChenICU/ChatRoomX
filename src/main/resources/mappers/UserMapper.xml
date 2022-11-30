@@ -1,0 +1,41 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mystery.chat.mappers.UserMapper">
+    <resultMap id="userEntity" type="com.mystery.chat.entities.UserEntity">
+        <result property="uid" column="uid_"/>
+        <result property="email" column="email_"/>
+        <result property="nickname" column="nickname_"/>
+        <result property="gender" column="gender_"/>
+        <result property="createInstant" column="create_instant_"/>
+    </resultMap>
+
+    <sql id="user_entity">
+        uid_,
+        email_,
+        nickname_,
+        password_,
+        gender_,
+        create_instant_
+    </sql>
+
+    <insert id="addUser">
+        INSERT INTO t_user
+        (<include refid="user_entity"/>)
+        VALUES (
+        #{user.uid},
+        #{user.email},
+        #{user.nickname},
+        #{user.password},
+        #{user.gender},
+        #{user.createInstant}
+        )
+    </insert>
+
+    <!-- 根据uid查询用户实体 -->
+    <select id="getByUID" resultMap="userEntity">
+        SELECT
+        <include refid="user_entity"/>
+        FROM t_user
+        WHERE uid_ = #{uid}
+    </select>
+</mapper>

@@ -6,17 +6,19 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 消息日期格式化工具
+ * 日期时间格式化工具
  *
  * @author shouchen
  */
-public final class MsgTimeFormatUtil {
+public final class DateTimeFormatUtil {
+    private static final DateTimeFormatter FORMATTER_0;
     private static final DateTimeFormatter FORMATTER_1;
     private static final DateTimeFormatter FORMATTER_2;
     private static final DateTimeFormatter FORMATTER_3;
     private static final ZoneId ZONE_ID;
 
     static {
+        FORMATTER_0 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         FORMATTER_1 = DateTimeFormatter.ofPattern("H:mm");
         FORMATTER_2 = DateTimeFormatter.ofPattern("M-d H:mm");
         FORMATTER_3 = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
@@ -24,6 +26,12 @@ public final class MsgTimeFormatUtil {
     }
 
     public static String format(long timestamp) {
+        return FORMATTER_0.format(
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZONE_ID)
+        );
+    }
+
+    public static String formatMsg(long timestamp) {
         LocalDateTime msgDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZONE_ID);
         LocalDateTime now = LocalDateTime.now(ZONE_ID);
         if (now.getYear() != msgDateTime.getYear()) {

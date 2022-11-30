@@ -32,13 +32,18 @@ public class IndexController implements ErrorController {
 
     @ResponseBody
     @RequestMapping(value = ERROR_PATH, produces = MediaType.TEXT_HTML_VALUE)
-    public void handle404ByHtml(HttpServletResponse response) throws IOException {
+    public void handleErrorByHtml(HttpServletResponse response) throws IOException {
         response.sendRedirect("/");
     }
 
     @ResponseBody
     @RequestMapping(value = ERROR_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultVO<?> handle404ByJson(HttpServletResponse response) {
-        return ResultVO.error(HttpStatus.valueOf(response.getStatus()).toString());
+    public ResultVO<?> handleErrorByJson(HttpServletResponse response) {
+        HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
+        return ResultVO.error(
+                httpStatus.toString()
+        ).setCode(
+                httpStatus.value()
+        );
     }
 }

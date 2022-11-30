@@ -22,7 +22,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         // TODO: 2022/11/27
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(JSON.toJSONString(ResultVO.success()));
     }
 }

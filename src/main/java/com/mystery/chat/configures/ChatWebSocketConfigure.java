@@ -13,7 +13,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Chat web socket configure
@@ -42,7 +41,7 @@ public class ChatWebSocketConfigure implements WebSocketConfigurer {
                         String name = servletRequest.getParameter("name");
                         attributes.put("name",
                                 name == null || name.trim().isEmpty() ?
-                                        "游客" + UIDGenerator.fromNameSpace(String.valueOf(ThreadLocalRandom.current().nextInt()))
+                                        "游客" + UIDGenerator.randomUID()
                                         : name);
                         return true;
                     }
