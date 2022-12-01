@@ -5,6 +5,7 @@
         <result property="uid" column="uid_"/>
         <result property="email" column="email_"/>
         <result property="nickname" column="nickname_"/>
+        <result property="password" column="password_"/>
         <result property="gender" column="gender_"/>
         <result property="createInstant" column="create_instant_"/>
     </resultMap>
@@ -37,5 +38,15 @@
         <include refid="user_entity"/>
         FROM t_user
         WHERE uid_ = #{uid}
+        LIMIT 1
+    </select>
+
+    <!-- 根据Email查询用户 -->
+    <select id="getByEmail" resultMap="userEntity">
+        SELECT
+        <include refid="user_entity"/>
+        FROM t_user
+        WHERE email_ = #{email}
+        LIMIT 1
     </select>
 </mapper>

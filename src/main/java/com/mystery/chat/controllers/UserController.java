@@ -1,6 +1,7 @@
 package com.mystery.chat.controllers;
 
 import com.mystery.chat.entities.UserEntity;
+import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.services.UserService;
 import com.mystery.chat.vos.ResultVO;
 import com.mystery.chat.vos.UserVO;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 /**
  * @author shouchen
@@ -37,7 +39,12 @@ public class UserController {
     @GetMapping("/{uid}")
     @PreAuthorize("hasAuthority('sys.user.get') or hasRole(@roles.ADMIN)")
     public ResultVO<UserVO> getUserByUID(@PathVariable String uid) {
-        return ResultVO.of(new UserVO(userService.getByUID(uid)));
+        return ResultVO.of(
+                new UserVO(Optional
+                        .ofNullable(userService.getByUID(uid))
+                        .orElseThrow(() -> new BusinessException("User not found"))
+                )
+        );
     }
 
     @PutMapping

@@ -17,6 +17,7 @@ import java.util.Objects;
 public class UserVO {
     @NotNull(message = "UID不能为null")
     private String uid;
+    @NotBlank
     @Email(message = "邮箱格式错误")
     private String email;
     @NotBlank(message = "昵称不能为空")
@@ -33,7 +34,7 @@ public class UserVO {
         this.setUid(userEntity.getUid())
                 .setEmail(userEntity.getEmail())
                 .setNickname(userEntity.getNickname())
-                .setPassword(userEntity.getPassword())
+                .setPassword(null)
                 .setGender(Genders.parseGender(userEntity.getGender()))
                 .setCreateDate(DateTimeFormatUtil.format(userEntity.getCreateInstant()));
     }

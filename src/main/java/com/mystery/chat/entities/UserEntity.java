@@ -82,4 +82,16 @@ public class UserEntity {
         this.createInstant = createInstant;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "uid='" + uid + '\'' +
+                ", email='" + email + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", password='" + password + '\'' +
+                ", gender='" + gender + '\'' +
+                ", createInstant=" + createInstant +
+                '}';
+    }
 }

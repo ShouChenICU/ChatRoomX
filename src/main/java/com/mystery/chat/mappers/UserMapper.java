@@ -12,12 +12,20 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
 
     /**
-     * 根据uid查询用户实体
+     * 根据uid查询用户
      *
      * @param uid uid
      * @return 用户
      */
     UserEntity getByUID(@Param("uid") String uid);
+
+    /**
+     * 根据Email查询用户
+     *
+     * @param email Email
+     * @return 用户
+     */
+    UserEntity getByEmail(@Param("email") String email);
 
     /**
      * 新增用户

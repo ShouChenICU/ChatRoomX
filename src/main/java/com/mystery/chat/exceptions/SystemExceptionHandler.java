@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -59,7 +60,7 @@ public class SystemExceptionHandler {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public void httpRequestMethodNotSupportedExceptionHandle(HttpServletRequest request) {
-        LOGGER.warn("Not support " + request.getMethod() + " " + request.getRequestURI());
+        LOGGER.warn("Not support {} {}", request.getMethod(), request.getRequestURI());
     }
 
     /**
@@ -69,8 +70,11 @@ public class SystemExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResultVO<?> httpMessageNotReadableExceptionHandle(HttpServletRequest request, HttpMessageNotReadableException exception) {
-        LOGGER.warn("{} {}", request.getMethod(), request.getRequestURI(), exception);
-        return ResultVO.error(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        LOGGER.warn("Required request body is missing {} {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                exception);
+        return ResultVO.error("Required request body is missing");
     }
 
     /**
@@ -80,7 +84,18 @@ public class SystemExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResultVO<?> methodArgumentNotValidExceptionHandle(HttpServletRequest request, MethodArgumentNotValidException exception) {
-        LOGGER.warn("{} {} {}", exception.getClass().getSimpleName(), request.getMethod(), request.getRequestURI(), exception);
+        FieldError fieldError = exception.getFieldError();
+        if (fieldError != null) {
+            LOGGER.warn("{} {} {} {}", exception.getClass().getSimpleName(),
+                    fieldError.getDefaultMessage(),
+                    request.getMethod(),
+                    request.getRequestURI());
+            return ResultVO.error(fieldError.getDefaultMessage());
+        }
+        LOGGER.warn("{} {} {}", exception.getClass().getSimpleName(),
+                request.getMethod(),
+                request.getRequestURI(),
+                exception);
         return ResultVO.error("Validation failed for argument");
     }
 

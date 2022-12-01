@@ -4,7 +4,10 @@ import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.UserMapper;
 import com.mystery.chat.utils.UIDGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,6 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 /**
  * 用户服务
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class UserService implements UserDetailsService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final PasswordEncoder passwordEncoder;
     private UserMapper userMapper;
 
@@ -35,11 +41,7 @@ public class UserService implements UserDetailsService {
      * @return 用户
      */
     public UserEntity getByUID(String uid) {
-        UserEntity userEntity = userMapper.getByUID(uid);
-        if (userEntity == null) {
-            throw new BusinessException("User not found");
-        }
-        return userEntity;
+        return userMapper.getByUID(uid);
     }
 
     /**
@@ -49,8 +51,28 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void registerUser(UserEntity userEntity) {
-        String uid = UIDGenerator.randomUID();
-
+        if (userMapper.getByEmail(userEntity.getEmail()) != null) {
+            throw new BusinessException("该Email已被注册");
+        }
+        String uid;
+        do {
+            uid = UIDGenerator.randomUID();
+        } while (getByUID(uid) != null);
+        userEntity.setUid(uid)
+                .setCreateInstant(System.currentTimeMillis())
+                .setPassword(passwordEncoder
+                        .encode(Objects.requireNonNullElse(userEntity.getPassword(), ""))
+                );
+        if (userMapper.addUser(userEntity) == 0) {
+            throw new BusinessException("注册失败");
+        }
+        LOGGER.info("注册用户 UID {} 注册人 {}",
+                uid,
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication()
+                        .getPrincipal()
+        );
     }
 
     @Override
