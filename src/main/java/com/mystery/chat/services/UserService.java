@@ -3,6 +3,7 @@ package com.mystery.chat.services;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.UserMapper;
+import com.mystery.chat.utils.LRUCache;
 import com.mystery.chat.utils.UIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +29,12 @@ import java.util.Objects;
 public class UserService implements UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final PasswordEncoder passwordEncoder;
+    private final LRUCache<String, UserEntity> userCache;
     private UserMapper userMapper;
 
     public UserService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+        this.userCache = new LRUCache<>(255);
     }
 
     /**
@@ -41,7 +44,14 @@ public class UserService implements UserDetailsService {
      * @return 用户
      */
     public UserEntity getByUID(String uid) {
-        return userMapper.getByUID(uid);
+        UserEntity userEntity = userCache.get(uid);
+        if (userEntity == null) {
+            userEntity = userMapper.getByUID(uid);
+            if (userEntity != null) {
+                userCache.put(uid, userEntity);
+            }
+        }
+        return userEntity;
     }
 
     /**
@@ -55,9 +65,11 @@ public class UserService implements UserDetailsService {
             throw new BusinessException("该Email已被注册");
         }
         String uid;
+        // 生成UID
         do {
             uid = UIDGenerator.randomUID();
         } while (getByUID(uid) != null);
+        // 初始化
         userEntity.setUid(uid)
                 .setCreateInstant(System.currentTimeMillis())
                 .setPassword(passwordEncoder
@@ -66,6 +78,7 @@ public class UserService implements UserDetailsService {
         if (userMapper.addUser(userEntity) == 0) {
             throw new BusinessException("注册失败");
         }
+        userCache.put(uid, userEntity);
         LOGGER.info("注册用户 UID {} 注册人 {}",
                 uid,
                 SecurityContextHolder
@@ -75,8 +88,19 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    /**
+     * 编辑用户
+     *
+     * @param userEntity 用户
+     */
+    public void editUser(UserEntity userEntity) {
+        // TODO: 2022/12/3
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity userEntity = userMapper.getByEmail(username);
+        // TODO: 2022/12/3
         return User.builder()
                 .username("qwe")
                 .password("asd")

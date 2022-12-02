@@ -1,11 +1,13 @@
 package com.mystery.chat.controllers;
 
+import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.services.UserService;
 import com.mystery.chat.vos.ResultVO;
 import com.mystery.chat.vos.UserVO;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.Optional;
 
 /**
@@ -47,15 +48,27 @@ public class UserController {
         );
     }
 
+    /**
+     * 注册用户
+     *
+     * @param userVO 用户VO
+     * @return 结果
+     */
     @PutMapping
     @PreAuthorize("hasAuthority('sys.user.register') or hasRole(@roles.ADMIN)")
-    public ResultVO<?> registerUser(@Valid @RequestBody UserVO userVO) {
+    public ResultVO<?> registerUser(@Validated(ValidGroup.Insert.class) @RequestBody UserVO userVO) {
         userService.registerUser(new UserEntity(userVO));
         return ResultVO.of("注册成功");
     }
 
+    public ResultVO<?> editUser(@Validated(ValidGroup.Update.class) @RequestBody UserVO userVO) {
+        // TODO: 2022/12/3  
+        return ResultVO.success();
+    }
+
     @DeleteMapping("/{uid}")
     public String deleteUserByUID(@PathVariable String uid) {
+        // TODO: 2022/12/3  
 //        throw new BusinessException("not fount");
         return "del user";
     }

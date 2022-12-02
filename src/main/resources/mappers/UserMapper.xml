@@ -19,6 +19,7 @@
         create_instant_
     </sql>
 
+    <!-- 添加用户 -->
     <insert id="addUser">
         INSERT INTO t_user
         (<include refid="user_entity"/>)
@@ -31,6 +32,20 @@
         #{user.createInstant}
         )
     </insert>
+
+    <!-- 更新用户 -->
+    <update id="updateUser">
+        UPDATE t_user
+        <trim suffixOverrides=",">
+            <if test="user.nickname != null">
+                SET nickname_ = #{user.nickname},
+            </if>
+            <if test="user.gender != null">
+                SET gender_ = #{user.gender},
+            </if>
+        </trim>
+        WHERE uid_ = #{user.uid}
+    </update>
 
     <!-- 根据uid查询用户实体 -->
     <select id="getByUID" resultMap="userEntity">

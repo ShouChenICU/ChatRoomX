@@ -84,6 +84,23 @@ public class UserEntity {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(uid, that.uid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid);
+    }
+
+    @Override
     public String toString() {
         return "UserEntity{" +
                 "uid='" + uid + '\'' +

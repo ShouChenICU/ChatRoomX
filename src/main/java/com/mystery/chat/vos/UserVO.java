@@ -1,6 +1,7 @@
 package com.mystery.chat.vos;
 
 import com.mystery.chat.costant.Genders;
+import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.utils.DateTimeFormatUtil;
 
@@ -15,13 +16,14 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class UserVO {
-    @NotNull(message = "UID不能为null")
+    @NotNull(message = "UID不能为null", groups = ValidGroup.Update.class)
     private String uid;
-    @NotBlank
-    @Email(message = "邮箱格式错误")
+    @NotBlank(groups = ValidGroup.Insert.class)
+    @Email(message = "邮箱格式错误", groups = ValidGroup.Insert.class)
     private String email;
-    @NotBlank(message = "昵称不能为空")
+    @NotBlank(message = "昵称不能为空", groups = ValidGroup.Insert.class)
     private String nickname;
+    @NotNull(message = "密码不能为空", groups = ValidGroup.Insert.class)
     private String password;
     private String gender;
     private String createDate;

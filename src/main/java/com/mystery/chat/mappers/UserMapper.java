@@ -34,4 +34,12 @@ public interface UserMapper {
      * @return 结果
      */
     int addUser(@Param("user") UserEntity user);
+
+    /**
+     * 更新用户
+     *
+     * @param user 用户
+     * @return 结果
+     */
+    int updateUser(@Param("user") UserEntity user);
 }
