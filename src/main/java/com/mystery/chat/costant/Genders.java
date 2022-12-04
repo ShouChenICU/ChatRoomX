@@ -9,7 +9,7 @@ import java.util.Map;
  * @author shouchen
  * @date 2022/11/29
  */
-public class Genders {
+public final class Genders {
     public static final String M = "M";
     public static final String M_VALUE = "男";
     public static final String F = "F";

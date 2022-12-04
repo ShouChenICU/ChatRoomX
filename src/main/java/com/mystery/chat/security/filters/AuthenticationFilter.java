@@ -24,25 +24,28 @@ import java.io.IOException;
 public class AuthenticationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (checkAuthority((HttpServletRequest) request, (HttpServletResponse) response)) {
+        if (checkAuthority((HttpServletRequest) request)) {
             chain.doFilter(request, response);
+        } else {
+            checkAuthorityFail((HttpServletResponse) response);
         }
     }
 
-    private boolean checkAuthority(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private boolean checkAuthority(HttpServletRequest request) {
         String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (auth == null || auth.isBlank() || auth.isEmpty()) {
 //            checkAuthorityFail(response);
             auth = "user.read";
         }
-        SecurityContextHolder
-                .getContext()
-                .setAuthentication(UsernamePasswordAuthenticationToken
-                        .authenticated("smr",
-                                "",
-                                AuthorityUtils.createAuthorityList(auth)
-                        )
-                );
+
+//        SecurityContextHolder
+//                .getContext()
+//                .setAuthentication(UsernamePasswordAuthenticationToken
+//                        .authenticated("smr",
+//                                "",
+//                                AuthorityUtils.createAuthorityList(auth)
+//                        )
+//                );
         return true;
     }
 

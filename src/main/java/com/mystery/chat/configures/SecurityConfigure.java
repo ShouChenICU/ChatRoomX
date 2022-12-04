@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfigure {
-    private static final String[] PERMIT_ANT_MATCHERS = new String[]{"/"};
+    private static final String[] PERMIT_ANT_MATCHERS = new String[]{"/", "/js/**", "/css/**", "/res/**"};
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private AuthenticationFailureHandler authenticationFailureHandler;
     private LogoutHandler logoutHandler;

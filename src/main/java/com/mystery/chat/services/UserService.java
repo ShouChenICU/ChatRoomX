@@ -1,5 +1,6 @@
 package com.mystery.chat.services;
 
+import com.mystery.chat.costant.Roles;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.UserMapper;
@@ -55,12 +56,12 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 注册用户
+     * 添加用户
      *
      * @param userEntity 用户实体
      */
     @Transactional(rollbackFor = Exception.class)
-    public void registerUser(UserEntity userEntity) {
+    public void addUser(UserEntity userEntity) {
         if (userMapper.getByEmail(userEntity.getEmail()) != null) {
             throw new BusinessException("该Email已被注册");
         }
@@ -74,12 +75,13 @@ public class UserService implements UserDetailsService {
                 .setCreateInstant(System.currentTimeMillis())
                 .setPassword(passwordEncoder
                         .encode(Objects.requireNonNullElse(userEntity.getPassword(), ""))
-                );
+                )
+                .setRole(Roles.ROLE_USER);
         if (userMapper.addUser(userEntity) == 0) {
-            throw new BusinessException("注册失败");
+            throw new BusinessException("添加失败");
         }
         userCache.put(uid, userEntity);
-        LOGGER.info("注册用户 UID {} 注册人 {}",
+        LOGGER.info("添加用户 UID {} 添加人 {}",
                 uid,
                 SecurityContextHolder
                         .getContext()
@@ -89,23 +91,27 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 编辑用户
+     * 更新用户
      *
      * @param userEntity 用户
      */
-    public void editUser(UserEntity userEntity) {
-        // TODO: 2022/12/3
+    public void updateUser(UserEntity userEntity) {
+        if (userMapper.updateUser(userEntity) == 0) {
+            throw new BusinessException("用户信息更新失败");
+        }
+        userCache.put(userEntity.getUid(), userEntity);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userMapper.getByEmail(username);
-        // TODO: 2022/12/3
+        if (userEntity == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
         return User.builder()
-                .username("qwe")
-                .password("asd")
-                .passwordEncoder(passwordEncoder::encode)
-                .authorities("USER")
+                .username(userEntity.getUid())
+                .password(userEntity.getPassword())
+                .authorities(userEntity.getRole())
                 .build();
     }
 

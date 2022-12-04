@@ -10,7 +10,7 @@ import java.time.format.DateTimeFormatter;
  *
  * @author shouchen
  */
-public final class DateTimeFormatUtil {
+public final class DateTimeFormatUtils {
     private static final DateTimeFormatter FORMATTER_0;
     private static final DateTimeFormatter FORMATTER_1;
     private static final DateTimeFormatter FORMATTER_2;

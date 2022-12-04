@@ -1,9 +1,10 @@
 package com.mystery.chat.vos;
 
 import com.mystery.chat.costant.Genders;
+import com.mystery.chat.costant.Roles;
 import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.UserEntity;
-import com.mystery.chat.utils.DateTimeFormatUtil;
+import com.mystery.chat.utils.DateTimeFormatUtils;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -26,6 +27,7 @@ public class UserVO {
     @NotNull(message = "密码不能为空", groups = ValidGroup.Insert.class)
     private String password;
     private String gender;
+    private String role;
     private String createDate;
 
     public UserVO() {
@@ -38,7 +40,8 @@ public class UserVO {
                 .setNickname(userEntity.getNickname())
                 .setPassword(null)
                 .setGender(Genders.parseGender(userEntity.getGender()))
-                .setCreateDate(DateTimeFormatUtil.format(userEntity.getCreateInstant()));
+                .setRole(Roles.parseRole(userEntity.getRole()))
+                .setCreateDate(DateTimeFormatUtils.format(userEntity.getCreateInstant()));
     }
 
     public String getUid() {
@@ -86,6 +89,15 @@ public class UserVO {
         return this;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public UserVO setRole(String role) {
+        this.role = role;
+        return this;
+    }
+
     public String getCreateDate() {
         return createDate;
     }
@@ -103,6 +115,7 @@ public class UserVO {
                 ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
+                ", role='" + role + '\'' +
                 ", createDate='" + createDate + '\'' +
                 '}';
     }

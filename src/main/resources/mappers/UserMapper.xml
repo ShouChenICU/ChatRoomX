@@ -7,6 +7,7 @@
         <result property="nickname" column="nickname_"/>
         <result property="password" column="password_"/>
         <result property="gender" column="gender_"/>
+        <result property="role" column="role_"/>
         <result property="createInstant" column="create_instant_"/>
     </resultMap>
 
@@ -16,6 +17,7 @@
         nickname_,
         password_,
         gender_,
+        role_,
         create_instant_
     </sql>
 
@@ -29,6 +31,7 @@
         #{user.nickname},
         #{user.password},
         #{user.gender},
+        #{user.role},
         #{user.createInstant}
         )
     </insert>

@@ -21,7 +21,7 @@ public class IndexController implements ErrorController {
     private static final String ERROR_PATH = "/error";
 
     @GetMapping("/")
-    public String indexPage(HttpServletResponse response) {
+    public String indexPage() {
         return "chatroom.html";
     }
 
@@ -40,6 +40,7 @@ public class IndexController implements ErrorController {
     @RequestMapping(value = ERROR_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultVO<?> handleErrorByJson(HttpServletResponse response) {
         HttpStatus httpStatus = HttpStatus.valueOf(response.getStatus());
+        response.setStatus(HttpStatus.OK.value());
         return ResultVO.error(
                 httpStatus.toString()
         ).setCode(

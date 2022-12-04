@@ -15,6 +15,7 @@ public class UserEntity {
     private String nickname;
     private String password;
     private String gender;
+    private String role;
     private long createInstant;
 
     public UserEntity() {
@@ -74,6 +75,15 @@ public class UserEntity {
         return this;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public UserEntity setRole(String role) {
+        this.role = role;
+        return this;
+    }
+
     public long getCreateInstant() {
         return createInstant;
     }
@@ -108,6 +118,7 @@ public class UserEntity {
                 ", nickname='" + nickname + '\'' +
                 ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
+                ", role='" + role + '\'' +
                 ", createInstant=" + createInstant +
                 '}';
     }

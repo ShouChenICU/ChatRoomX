@@ -2,9 +2,107 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Login</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/vue.global.js"></script>
+    <script src="js/axios.min.js"></script>
+    <style>
+        .mainBody {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            background-image: url("res/login-bg.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .loginCard {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 5px gray;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+        }
+    </style>
 </head>
 <body>
-login
+<div class="mainBody" id="app">
+    <div class="loginCard">
+        <span class="mb-3" style="font-size: 1.5rem">Login</span>
+        <hr class="mb-3">
+        <div>
+            <div class="mb-3">
+                <label class="form-label" for="username">Email:</label><br>
+                <input class="form-control form-control-sm" id="username" type="email" v-model="username"
+                       placeholder="Please enter your email"/>
+            </div>
+            <div>
+                <label class="form-label" for="password">Password:</label><br>
+                <input class="form-control form-control-sm" id="password" type="password" v-model="password"
+                       placeholder="Please enter your password" @keydown="enterKey($event)"/>
+            </div>
+            <button class="btn btn-sm btn-link p-0" @click="forgetPwd">Forget password?</button>
+            <div class="clearfix text-danger">{{errMsg}}</div>
+            <button class="btn btn-success float-end mt-3" @click="login">login</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data: () => {
+            return {
+                username: '',
+                password: '',
+                errMsg: ''
+            }
+        },
+        methods: {
+            forgetPwd() {
+                alert('No way, I can\'t help it either')
+            },
+            enterKey(ev) {
+                console.log(ev)
+                if (ev.keyCode === 13) {
+                    this.login()
+                }
+            },
+            login() {
+                if (this.username === '') {
+                    this.errMsg = 'Please enter your email'
+                    return
+                } else if (this.password === '') {
+                    this.errMsg = 'Please enter your password'
+                    return
+                }
+                this.errMsg = '';
+                let param = new FormData()
+                param.set("username", this.username)
+                param.set("password", this.password)
+                axios.post('/login', param)
+                    .then(res => {
+                        if (res.data.code === 200) {
+                            location.href = "/"
+                        } else {
+                            this.errMsg = res.data.error
+                        }
+                    })
+                    .catch(err => {
+                        this.errMsg = err.message
+                    })
+            }
+        }
+    })
+    app.mount('#app')
+</script>
 </body>
 </html>

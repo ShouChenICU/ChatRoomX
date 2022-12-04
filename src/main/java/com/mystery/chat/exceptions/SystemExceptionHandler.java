@@ -6,10 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -45,11 +46,11 @@ public class SystemExceptionHandler {
      * @return 响应体
      */
     @ExceptionHandler(AccessDeniedException.class)
-    public ResultVO<?> accessDeniedExceptionHandle(AccessDeniedException exception, HttpServletRequest request) {
+    public ResultVO<?> accessDeniedExceptionHandle(AccessDeniedException exception, HttpServletRequest request, Authentication authentication) {
         LOGGER.warn(exception.getClass().getSimpleName() + " {} {} UID {}",
                 request.getMethod(),
                 request.getRequestURI(),
-                SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+                authentication.getPrincipal());
         return ResultVO.error(HttpStatus.FORBIDDEN.toString()).setCode(HttpStatus.FORBIDDEN.value());
     }
 
@@ -59,8 +60,13 @@ public class SystemExceptionHandler {
      * @param request 请求
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public void httpRequestMethodNotSupportedExceptionHandle(HttpServletRequest request) {
+    public ResultVO<?> httpRequestMethodNotSupportedExceptionHandle(HttpServletRequest request) {
         LOGGER.warn("Not support {} {}", request.getMethod(), request.getRequestURI());
+        return ResultVO.of(
+                HttpStatus.NOT_FOUND.toString()
+        ).setCode(
+                HttpStatus.NOT_FOUND.value()
+        );
     }
 
     /**
@@ -70,11 +76,26 @@ public class SystemExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResultVO<?> httpMessageNotReadableExceptionHandle(HttpServletRequest request, HttpMessageNotReadableException exception) {
-        LOGGER.warn("Required request body is missing {} {}",
+        LOGGER.warn("{} Required request body is missing {} {}",
+                exception.getClass().getSimpleName(),
                 request.getMethod(),
-                request.getRequestURI(),
-                exception);
+                request.getRequestURI());
         return ResultVO.error("Required request body is missing");
+    }
+
+    /**
+     * 需要请求参数
+     *
+     * @param request 请求
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResultVO<?> missingServletRequestParameterExceptionHandle(HttpServletRequest request, MissingServletRequestParameterException exception) {
+        LOGGER.warn("{} {} {} {}",
+                exception.getClass().getSimpleName(),
+                exception.getMessage(),
+                request.getMethod(),
+                request.getRequestURI());
+        return ResultVO.error("Required request parameter is missing");
     }
 
     /**
