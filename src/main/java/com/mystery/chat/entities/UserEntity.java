@@ -16,6 +16,7 @@ public class UserEntity {
     private String password;
     private String gender;
     private String role;
+    private String signature;
     private long createInstant;
 
     public UserEntity() {
@@ -27,7 +28,8 @@ public class UserEntity {
                 .setEmail(userVO.getEmail())
                 .setNickname(userVO.getNickname())
                 .setPassword(userVO.getPassword())
-                .setGender(Genders.checkGender(userVO.getGender()));
+                .setGender(Genders.checkGender(userVO.getGender()))
+                .setSignature(Objects.requireNonNullElse(userVO.getSignature(), ""));
     }
 
     public String getUid() {
@@ -84,6 +86,15 @@ public class UserEntity {
         return this;
     }
 
+    public String getSignature() {
+        return signature;
+    }
+
+    public UserEntity setSignature(String signature) {
+        this.signature = signature;
+        return this;
+    }
+
     public long getCreateInstant() {
         return createInstant;
     }
@@ -119,6 +130,7 @@ public class UserEntity {
                 ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
                 ", role='" + role + '\'' +
+                ", signature='" + signature + '\'' +
                 ", createInstant=" + createInstant +
                 '}';
     }

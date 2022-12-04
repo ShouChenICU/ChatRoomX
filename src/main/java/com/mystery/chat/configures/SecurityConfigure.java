@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfigure {
-    private static final String[] PERMIT_ANT_MATCHERS = new String[]{"/", "/js/**", "/css/**", "/res/**"};
+    private static final String[] PERMIT_ANT_MATCHERS = new String[]{"/", "/js/**", "/css/**", "/res/**", "/fonts/**"};
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private AuthenticationFailureHandler authenticationFailureHandler;
     private LogoutHandler logoutHandler;
@@ -42,7 +42,7 @@ public class SecurityConfigure {
                 .and()
                 // 登陆配置
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/")
                 .loginProcessingUrl("/login")
                 .usernameParameter("username")
                 .passwordParameter("password")
@@ -63,6 +63,7 @@ public class SecurityConfigure {
                 .and()
                 .csrf()
                 .disable()
+                // JWT过滤器
                 .addFilterAfter(new AuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

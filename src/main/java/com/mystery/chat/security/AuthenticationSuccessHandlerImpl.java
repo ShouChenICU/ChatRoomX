@@ -26,14 +26,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        // TODO: 2022/11/27
         Cookie cookie = new Cookie(HttpHeaders.AUTHORIZATION,
                 JWTUtils.genToken(authentication.getName(),
                         authentication.getAuthorities())
         );
         cookie.setHttpOnly(true);
         cookie.setMaxAge(COOKIE_EXP_AGE);
-
         response.addCookie(cookie);
         response.getWriter().write(JSON.toJSONString(ResultVO.success()));
     }

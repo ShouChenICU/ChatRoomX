@@ -2,65 +2,118 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>Title</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/vue.global.js"></script>
+    <script src="js/axios.min.js"></script>
+    <link rel="stylesheet" href="css/chatroom.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <style>
+        body, html {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden hidden;
+        }
+    </style>
 </head>
 
 <body>
-<input id="name" type="text" placeholder="昵称">
-<button id="conn">连接</button>&emsp;<span id="status">未连接</span>
-<button id="disconn">断开</button>
-<br>
-<textarea id="content"></textarea>
-<button id="send">发送</button>
-<br>
-<div id="result" style="max-height: 400px;overflow-y: scroll;box-shadow:0 0 3px gray;border-radius: 0.5rem;padding: 0.5rem">
+<div id="app" class="mainBody">
+    <div class="sideBar">
+        <!-- 我的信息 -->
+        <div style="background: #86C166">
+            <button class="btn btn-sm btn-light float-end m-1" @click="showSideBar">X</button>
+            <div class="ps-3 pt-3 d-flex flex-row align-items-center">
+                <img decoding="async" @click="a" class="avatar" src="res/avatar.jpg" alt="avatar">
+                <div style="margin-left: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1">
+                    <span>nickname</span><br>
+                    <small title="signature">signature...</small>
+                </div>
+            </div>
+            <div class="ps-3 pb-3 pt-2">
+                <span>Online: {{3}}</span>
+            </div>
+        </div>
+        <!--        <hr class="m-0">-->
+        <!-- 目录控制 -->
+        <div class="flex-grow-1 d-flex flex-column" style="min-height: 0">
+            <div class="d-flex flex-row p-1">
+                <div class="menuBtn flex-grow-1 text-center">
+                    <i class="fa fa-home fa-2x text-secondary"></i>
+                </div>
+                <div class="menuBtn flex-grow-1 text-center">
+                    <i class="fa fa-globe fa-2x text-secondary"></i>
+                </div>
+                <div class="menuBtn flex-grow-1 text-center">
+                    <i class="fa fa-users fa-2x text-secondary"></i>
+                </div>
+                <div class="menuBtn flex-grow-1 text-center">
+                    <i class="fa fa-gears fa-2x text-secondary"></i>
+                </div>
+            </div>
+            <hr class="m-0">
+            <div id="room-list" class="overflow-auto flex-grow-1 scrollBeautiful">
+                <div class="d-flex flex-column px-1" v-for="i in 50">
+                    <div class="roomBtn">
+                        <img decoding="async" src="res/avatar.jpg" alt="avatar">
+                        <div>
+                            <span>room{{i}}</span>
+                            <small>Some message...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 底部菜单 -->
+    </div>
 
+    <button class="btn btn-sm btn-light mt-1"
+            style="border-radius: 0 10px 10px 0; position: absolute; left: 0; top: 0; z-index: 5" @click="showSideBar">=
+    </button>
+
+    <div class="rightBody">
+        <div class="topBar">
+            top
+        </div>
+        <div class="contentBody">
+            content
+        </div>
+        <div class="msgBar">
+            msg
+        </div>
+    </div>
 </div>
 </body>
 
 <script>
-    let ws
-    document.getElementById("conn").onclick = function () {
-        ws = new WebSocket("ws://localhost:8083/ws/chat?name=" + document.getElementById("name").value)
-        document.getElementById("status").innerText = '已连接'
-        ws.onclose = ev => {
-            document.getElementById("status").innerText = '未连接'
+    const app = Vue.createApp({
+        data: () => {
+            return {
+                name: 'asdq'
+            }
+        },
+        methods: {
+            a() {
+                let dom = document.getElementById('room-list')
+                dom.scrollTo(0, dom.scrollHeight)
+            },
+            showSideBar() {
+                const el = document.documentElement
+                if (getComputedStyle(el).getPropertyValue('--sideBarLeft') === ' 0rem') {
+                    el.style.setProperty('--sideBarLeft', '-16rem')
+                    el.style.setProperty('--rightBodyLeft', '0rem')
+                } else {
+                    el.style.setProperty('--sideBarLeft', ' 0rem')
+                    el.style.setProperty('--rightBodyLeft', '16rem')
+                }
+            }
         }
-        ws.onerror = ev => {
-            console.log(ev)
-            document.getElementById("status").innerText = '错误'
-        }
-        ws.onmessage = ev => {
-            document.getElementById("result").innerText += '\n' + ev.data
-            document.getElementById("result").scrollTo(0, document.getElementById("result").scrollHeight)
-            console.log(ev)
-        }
-        console.log(ws)
-    }
-    document.getElementById("disconn").onclick = function () {
-        ws.close()
-    }
-    document.getElementById("content").onkeydown = ev => {
-        if (ev.code === 'Enter') {
-            send()
-        }
-    }
-    document.getElementById("content").onkeyup = ev => {
-        if (ev.code === 'Enter') {
-            document.getElementById("content").value = ''
-        }
-    }
-    document.getElementById("send").onclick = function () {
-        send()
-        document.getElementById("content").value = ''
-    }
-    function send(){
-        let msg = document.getElementById("content").value
-        if (msg === '') {
-            return
-        }
-        console.log(msg);
-        ws.send(msg)
-    }
+    })
+    app.mount('#app')
 </script>
 </html>

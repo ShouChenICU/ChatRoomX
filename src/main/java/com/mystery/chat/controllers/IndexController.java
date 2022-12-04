@@ -2,13 +2,17 @@ package com.mystery.chat.controllers;
 
 import com.mystery.chat.vos.ResultVO;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.security.PermitAll;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -21,13 +25,12 @@ public class IndexController implements ErrorController {
     private static final String ERROR_PATH = "/error";
 
     @GetMapping("/")
-    public String indexPage() {
+    @PermitAll
+    public String indexPage(Authentication authentication, HttpServletRequest request) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "login.html";
+        }
         return "chatroom.html";
-    }
-
-    @GetMapping(value = "/login", produces = MediaType.TEXT_HTML_VALUE)
-    public String loginPage() {
-        return "login.html";
     }
 
     @ResponseBody

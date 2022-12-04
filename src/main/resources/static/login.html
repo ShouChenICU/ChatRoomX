@@ -52,7 +52,7 @@
             </div>
             <button class="btn btn-sm btn-link p-0" @click="forgetPwd">Forget password?</button>
             <div class="clearfix text-danger">{{errMsg}}</div>
-            <button class="btn btn-success float-end mt-3" @click="login">login</button>
+            <button class="btn btn-success float-end mt-3" @click="doLogin">login</button>
         </div>
     </div>
 </div>
@@ -73,10 +73,10 @@
             enterKey(ev) {
                 console.log(ev)
                 if (ev.keyCode === 13) {
-                    this.login()
+                    this.doLogin()
                 }
             },
-            login() {
+            doLogin() {
                 if (this.username === '') {
                     this.errMsg = 'Please enter your email'
                     return

@@ -7,6 +7,7 @@ import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -22,12 +23,15 @@ public class UserVO {
     @NotBlank(groups = ValidGroup.Insert.class)
     @Email(message = "邮箱格式错误", groups = ValidGroup.Insert.class)
     private String email;
+    @Max(value = 64, message = "昵称长度不能超过64", groups = ValidGroup.Common.class)
     @NotBlank(message = "昵称不能为空", groups = ValidGroup.Insert.class)
     private String nickname;
     @NotNull(message = "密码不能为空", groups = ValidGroup.Insert.class)
     private String password;
     private String gender;
     private String role;
+    @Max(value = 1024, message = "签名长度不能超过1024")
+    private String signature;
     private String createDate;
 
     public UserVO() {
@@ -41,6 +45,7 @@ public class UserVO {
                 .setPassword(null)
                 .setGender(Genders.parseGender(userEntity.getGender()))
                 .setRole(Roles.parseRole(userEntity.getRole()))
+                .setSignature(userEntity.getSignature())
                 .setCreateDate(DateTimeFormatUtils.format(userEntity.getCreateInstant()));
     }
 
@@ -98,6 +103,15 @@ public class UserVO {
         return this;
     }
 
+    public String getSignature() {
+        return signature;
+    }
+
+    public UserVO setSignature(String signature) {
+        this.signature = signature;
+        return this;
+    }
+
     public String getCreateDate() {
         return createDate;
     }
@@ -116,6 +130,7 @@ public class UserVO {
                 ", password='" + password + '\'' +
                 ", gender='" + gender + '\'' +
                 ", role='" + role + '\'' +
+                ", signature='" + signature + '\'' +
                 ", createDate='" + createDate + '\'' +
                 '}';
     }

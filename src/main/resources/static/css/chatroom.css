@@ -1,0 +1,139 @@
+@media screen and (max-width: 768px) {
+    :root {
+        --sideBarLeft: -16rem;
+        --rightBodyLeft: 0rem;
+    }
+
+    .rightBody {
+        left: 0;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    :root {
+        --sideBarLeft: 0rem;
+        --rightBodyLeft: 16rem;
+    }
+
+    .rightBody {
+        left: var(--rightBodyLeft);
+    }
+}
+
+.mainBody {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.sideBar {
+    background: white;
+    position: absolute;
+    top: 0;
+    left: var(--sideBarLeft);
+    bottom: 0;
+    width: 16rem;
+    box-shadow: 0 0 3px gray;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    transition: left 0.5s ease;
+}
+
+.rightBody {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    transition: left 0.5s ease;
+}
+
+.topBar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.5rem;
+    background-image: linear-gradient(160deg, #58B2DC, #FEDFE1);
+    z-index: 1;
+    box-shadow: 0 0 5px gray;
+}
+
+.contentBody {
+    backdrop-filter: blur(5px);
+    z-index: 0;
+    flex-grow: 1;
+    padding: 0.5rem;
+}
+
+.msgBar {
+    padding: 0.5rem;
+    z-index: 1;
+    box-shadow: 0 0 3px gray;
+}
+
+.avatar {
+    border-radius: 5px;
+    box-shadow: 0 1px 2px gray;
+    width: 48px;
+    height: 48px;
+    transition: all 0.25s ease;
+}
+
+.avatar:hover {
+    box-shadow: 0 1px 7px gray;
+}
+
+.roomBtn {
+    display: flex;
+    flex-direction: row;
+    align-content: stretch;
+    padding: 0.5rem;
+    transition: background-color 0.2s ease;
+}
+
+.roomBtn:hover {
+    background: lightgray;
+}
+
+.roomBtn img {
+    border-radius: 5px;
+    box-shadow: 0 1px 2px gray;
+    height: 42px;
+    width: 42px;
+}
+
+.roomBtn div {
+    margin-left: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.menuBtn {
+    padding: 0.5rem 0;
+    transition: background-color 0.2s ease;
+}
+
+.menuBtn:hover {
+    background: lightgray;
+}
+
+.scrollBeautiful {
+}
+
+.scrollBeautiful::-webkit-scrollbar {
+    width: 5px;
+}
+
+.scrollBeautiful::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, .3);
+    background-color: lightgray;
+}
