@@ -1,7 +1,9 @@
 @media screen and (max-width: 768px) {
+    /* 移动端 */
     :root {
         --sideBarLeft: -16rem;
         --rightBodyLeft: 0rem;
+        --isMobile: true;
     }
 
     .rightBody {
@@ -10,9 +12,11 @@
 }
 
 @media screen and (min-width: 768px) {
+    /* 桌面端 */
     :root {
         --sideBarLeft: 0rem;
         --rightBodyLeft: 16rem;
+        --isMobile: false;
     }
 
     .rightBody {
@@ -33,12 +37,12 @@
     left: var(--sideBarLeft);
     bottom: 0;
     width: 16rem;
-    box-shadow: 0 0 3px gray;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
-    transition: left 0.5s ease;
+    transition: left 1s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .rightBody {
@@ -50,24 +54,25 @@
     display: flex;
     flex-direction: column;
     align-content: center;
-    transition: left 0.5s ease;
+    transition: left 1s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .topBar {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    padding: 0.5rem;
+    justify-content: space-between;
+    align-content: center;
+    padding: 0.5rem 0.5rem 0.5rem 0;
     background-image: linear-gradient(160deg, #58B2DC, #FEDFE1);
     z-index: 1;
-    box-shadow: 0 0 5px gray;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .contentBody {
-    backdrop-filter: blur(5px);
     z-index: 0;
     flex-grow: 1;
-    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .msgBar {
@@ -78,14 +83,28 @@
 
 .avatar {
     border-radius: 5px;
-    box-shadow: 0 1px 2px gray;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     width: 48px;
     height: 48px;
     transition: all 0.25s ease;
 }
 
 .avatar:hover {
-    box-shadow: 0 1px 7px gray;
+    box-shadow: 0 1px 7px rgba(255, 255, 255, 0.5);
+}
+
+.avatar-sm {
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    width: 42px;
+    height: 42px;
+}
+
+.avatar-xs {
+    border-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    width: 38px;
+    height: 38px;
 }
 
 .roomBtn {
@@ -102,7 +121,7 @@
 
 .roomBtn img {
     border-radius: 5px;
-    box-shadow: 0 1px 2px gray;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     height: 42px;
     width: 42px;
 }
@@ -117,12 +136,29 @@
 }
 
 .menuBtn {
-    padding: 0.5rem 0;
+    color: #333333;
+    padding: 0.5rem;
     transition: background-color 0.2s ease;
+}
+
+.menuBtn img {
+    width: 32px;
+    height: 32px;
 }
 
 .menuBtn:hover {
     background: lightgray;
+}
+
+.template {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 7;
+    background: rgba(0, 0, 0, 0.5);
+    transition: background-color 0.5s ease;
 }
 
 .scrollBeautiful {
