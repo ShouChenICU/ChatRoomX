@@ -16,7 +16,7 @@ public final class Roles {
     public static final String ROLE_USER = "ROLE_USER";
     public static final String ROLE_USER_VALUE = "用户";
     public static final String ADMIN = "ADMIN";
-    public static final String USER = "USER";
+    public static final String[] USER = new String[]{"USER", "ADMIN"};
     private static final Map<String, String> ROLE_MAP = new HashMap<>() {
         {
             put(ROLE_ADMIN, ROLE_ADMIN_VALUE);

@@ -7,5 +7,7 @@ package com.mystery.chat.entities;
 public class MemberEntity {
     private String uid;
     private String roomID;
+    private String role;
+    private String label;
     private long joinInstant;
 }

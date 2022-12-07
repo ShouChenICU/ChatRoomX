@@ -1,6 +1,5 @@
 package com.mystery.chat.vos;
 
-import com.mystery.chat.costant.Genders;
 import com.mystery.chat.costant.Roles;
 import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.UserEntity;
@@ -18,19 +17,20 @@ import java.util.Objects;
  */
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 public class UserVO {
-    @NotNull(message = "UID不能为null", groups = ValidGroup.Update.class)
+    @NotNull(message = "UID cannot be empty", groups = ValidGroup.Update.class)
     private String uid;
     @NotBlank(groups = ValidGroup.Insert.class)
-    @Email(message = "邮箱格式错误", groups = ValidGroup.Insert.class)
+    @Email(message = "Email format error", groups = ValidGroup.Insert.class)
     private String email;
-    @Max(value = 64, message = "昵称长度不能超过64", groups = ValidGroup.Common.class)
-    @NotBlank(message = "昵称不能为空", groups = ValidGroup.Insert.class)
+    @Max(value = 64, message = "Nickname length cannot exceed 64", groups = ValidGroup.Common.class)
+    @NotBlank(message = "Nickname cannot be empty", groups = ValidGroup.Insert.class)
     private String nickname;
-    @NotNull(message = "密码不能为空", groups = ValidGroup.Insert.class)
+    @NotBlank(message = "Password cannot be empty", groups = ValidGroup.Insert.class)
     private String password;
+    @Max(value = 16, groups = ValidGroup.Common.class, message = "Gender length cannot exceed 16")
     private String gender;
     private String role;
-    @Max(value = 1024, message = "签名长度不能超过1024")
+    @Max(value = 64, message = "Signature length cannot exceed 64", groups = ValidGroup.Common.class)
     private String signature;
     private String createDate;
 
@@ -43,7 +43,7 @@ public class UserVO {
                 .setEmail(userEntity.getEmail())
                 .setNickname(userEntity.getNickname())
                 .setPassword(null)
-                .setGender(Genders.parseGender(userEntity.getGender()))
+                .setGender(userEntity.getGender())
                 .setRole(Roles.parseRole(userEntity.getRole()))
                 .setSignature(userEntity.getSignature())
                 .setCreateDate(DateTimeFormatUtils.format(userEntity.getCreateInstant()));

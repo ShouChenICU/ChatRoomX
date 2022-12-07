@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
 
     /**
-     * 根据uid查询用户
+     * 根据用户UID查询用户
      *
      * @param uid uid
      * @return 用户

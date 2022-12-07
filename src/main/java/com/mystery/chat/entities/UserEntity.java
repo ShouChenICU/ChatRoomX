@@ -1,6 +1,5 @@
 package com.mystery.chat.entities;
 
-import com.mystery.chat.costant.Genders;
 import com.mystery.chat.vos.UserVO;
 
 import java.util.Objects;
@@ -28,7 +27,7 @@ public class UserEntity {
                 .setEmail(userVO.getEmail())
                 .setNickname(userVO.getNickname())
                 .setPassword(userVO.getPassword())
-                .setGender(Genders.checkGender(userVO.getGender()))
+                .setGender(Objects.requireNonNullElse(userVO.getGender(), "Unknown").trim())
                 .setSignature(Objects.requireNonNullElse(userVO.getSignature(), ""));
     }
 

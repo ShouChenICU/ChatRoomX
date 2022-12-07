@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 根据uid查询用户实体
+     * 根据用户UID查询用户
      *
      * @param uid uid
      * @return 用户

@@ -6,6 +6,7 @@ import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.services.UserService;
 import com.mystery.chat.vos.ResultVO;
 import com.mystery.chat.vos.UserVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -24,11 +25,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
 
     /**
      * 根据uid查询用户实体
@@ -37,7 +34,7 @@ public class UserController {
      * @return 用户VO
      */
     @PostMapping(value = "/get")
-    @PreAuthorize("hasAnyRole(@roles.USER, @roles.ADMIN)")
+    @PreAuthorize("hasAnyRole(@roles.USER)")
     public ResultVO<UserVO> getUserByUID(@RequestParam String uid) {
         return ResultVO.of(
                 new UserVO(Optional
@@ -75,9 +72,16 @@ public class UserController {
     }
 
     @PostMapping("/delete")
+    @PreAuthorize("hasRole(@roles.ADMIN)")
     public String deleteUserByUID(@RequestParam String uid) {
         // TODO: 2022/12/3  
 //        throw new BusinessException("not fount");
         return "del user";
+    }
+
+    @Autowired
+    public UserController setUserService(UserService userService) {
+        this.userService = userService;
+        return this;
     }
 }

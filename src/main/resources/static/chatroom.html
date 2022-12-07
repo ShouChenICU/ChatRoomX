@@ -73,7 +73,7 @@
     </div>
 
     <!-- 右侧内容面板 -->
-    <div class="rightBody">
+    <div id="rightBody" class="rightBody">
         <div class="topBar">
             <div class="d-flex align-items-center">
                 <img src="res/more.svg" class="btn btn-sm"
@@ -93,7 +93,7 @@
                 </div>
             </div>
         </div>
-        <!-- 聊天框 -->
+        <!-- 聊天面板 -->
         <div id="chat-room" class="contentBody">
             <div class="flex-grow-1 p-2">
                 msg1
@@ -103,9 +103,10 @@
                 msg
             </div>
         </div>
+        <!-- 文件面板 -->
     </div>
 
-    <div v-bind:class="{'template':isTempShow}" @click="showSideBar">
+    <div id="template" class="template" @click="showSideBar">
     </div>
 </div>
 </body>
@@ -115,7 +116,8 @@
         data: () => {
             return {
                 name: 'asdq',
-                isTempShow: false
+                isTempCanClick: true,
+                isSideBarShow: true
             }
         },
         methods: {
@@ -124,21 +126,42 @@
                 dom.scrollTo(0, dom.scrollHeight)
             },
             showSideBar() {
-                const el = document.documentElement
-                if (getComputedStyle(el).getPropertyValue('--sideBarLeft') === ' 0rem') {
-                    el.style.setProperty('--sideBarLeft', '-16rem')
-                    el.style.setProperty('--rightBodyLeft', '0rem')
-                    this.isTempShow = false
+                if (!this.isTempCanClick) {
+                    return
+                }
+                const sideBar = document.getElementById('side-bar');
+                const rightBody = document.getElementById('rightBody')
+                const template = document.getElementById('template')
+                if (this.isSideBarShow) {
+                    sideBar.style.left = '-16rem'
+                    rightBody.style.left = '0'
+                    // if (document.body.clientWidth < 768) {
+                    template.style.backgroundColor = 'rgba(0, 0, 0, 0)'
+                    template.style.backdropFilter = ''
+                    this.isTempCanClick = false
+                    const id = setInterval(() => {
+                        template.style.height = '0'
+                        this.isTempCanClick = true
+                        clearInterval(id)
+                    }, 1000);
+                    // }
                 } else {
-                    el.style.setProperty('--sideBarLeft', ' 0rem')
-                    el.style.setProperty('--rightBodyLeft', '16rem')
+                    sideBar.style.left = '0'
                     if (document.body.clientWidth < 768) {
-                        this.isTempShow = true
+                        template.style.height = '100%'
+                        template.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+                        template.style.backdropFilter = 'blur(3px)'
+                    } else {
+                        rightBody.style.left = '16rem'
                     }
                 }
+                this.isSideBarShow = !this.isSideBarShow
             }
         },
         mounted() {
+            if (document.body.clientWidth < 768) {
+                this.showSideBar()
+            }
         }
     })
     app.mount('#app')

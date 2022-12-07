@@ -10,6 +10,20 @@
     <script src="js/vue.global.js"></script>
     <script src="js/axios.min.js"></script>
     <style>
+        @media screen and (max-width: 768px) {
+            /* 移动端 */
+            .mainBody {
+                background-image: url("res/login-bg-mobile.jpg");
+            }
+        }
+
+        @media screen and (min-width: 768px) {
+            /* 桌面端 */
+            .mainBody {
+                background-image: url("res/login-bg.jpg");
+            }
+        }
+
         .mainBody {
             position: absolute;
             top: 0;
@@ -20,15 +34,14 @@
             flex-direction: row;
             justify-content: center;
             align-items: center;
-            background-image: url("res/login-bg.jpg");
             background-repeat: no-repeat;
             background-size: cover;
         }
 
         .loginCard {
             padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 5px gray;
+            border-radius: 7px;
+            box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
         }

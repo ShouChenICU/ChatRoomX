@@ -1,26 +1,14 @@
 @media screen and (max-width: 768px) {
     /* 移动端 */
     :root {
-        --sideBarLeft: -16rem;
-        --rightBodyLeft: 0rem;
         --isMobile: true;
-    }
-
-    .rightBody {
-        left: 0;
     }
 }
 
 @media screen and (min-width: 768px) {
     /* 桌面端 */
     :root {
-        --sideBarLeft: 0rem;
-        --rightBodyLeft: 16rem;
         --isMobile: false;
-    }
-
-    .rightBody {
-        left: var(--rightBodyLeft);
     }
 }
 
@@ -34,7 +22,7 @@
     background: white;
     position: absolute;
     top: 0;
-    left: var(--sideBarLeft);
+    left: 0;
     bottom: 0;
     width: 16rem;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
@@ -48,6 +36,7 @@
 .rightBody {
     position: absolute;
     top: 0;
+    left: 16rem;
     right: 0;
     bottom: 0;
     z-index: 0;
@@ -112,6 +101,7 @@
     flex-direction: row;
     align-content: stretch;
     padding: 0.5rem;
+    border-radius: 5px;
     transition: background-color 0.2s ease;
 }
 
@@ -136,7 +126,7 @@
 }
 
 .menuBtn {
-    color: #333333;
+    border-radius: 5px;
     padding: 0.5rem;
     transition: background-color 0.2s ease;
 }
@@ -155,10 +145,10 @@
     left: 0;
     right: 0;
     top: 0;
-    bottom: 0;
+    height: 0;
     z-index: 7;
-    background: rgba(0, 0, 0, 0.5);
-    transition: background-color 0.5s ease;
+    background: rgba(0, 0, 0, 0);
+    transition: background-color 0.5s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .scrollBeautiful {
