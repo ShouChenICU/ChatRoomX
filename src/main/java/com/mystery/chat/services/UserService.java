@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户服务
@@ -44,15 +45,14 @@ public class UserService implements UserDetailsService {
      * @param uid uid
      * @return 用户
      */
-    public UserEntity getByUID(String uid) {
+    public Optional<UserEntity> getByUID(String uid) {
         UserEntity userEntity = userCache.get(uid);
         if (userEntity == null) {
-            userEntity = userMapper.getByUID(uid);
-            if (userEntity != null) {
-                userCache.put(uid, userEntity);
-            }
+            Optional<UserEntity> user = userMapper.getByUID(uid);
+            user.ifPresent(entity -> userCache.put(uid, entity));
+            return user;
         }
-        return userEntity;
+        return Optional.of(userEntity);
     }
 
     /**
@@ -62,14 +62,15 @@ public class UserService implements UserDetailsService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void addUser(UserEntity userEntity) {
-        if (userMapper.getByEmail(userEntity.getEmail()) != null) {
-            throw new BusinessException("该Email已被注册");
-        }
+        userMapper.getByEmail(userEntity.getEmail())
+                .ifPresent(entity -> {
+                    throw new BusinessException("Email already exists");
+                });
         String uid;
         // 生成UID
         do {
             uid = UIDGenerator.randomUID();
-        } while (getByUID(uid) != null);
+        } while (getByUID(uid).isPresent());
         // 初始化
         userEntity.setUid(uid)
                 .setCreateInstant(System.currentTimeMillis())
@@ -78,10 +79,10 @@ public class UserService implements UserDetailsService {
                 )
                 .setRole(Roles.ROLE_USER);
         if (userMapper.addUser(userEntity) == 0) {
-            throw new BusinessException("添加失败");
+            throw new BusinessException("Add failure");
         }
         userCache.put(uid, userEntity);
-        LOGGER.info("添加用户 UID {} 添加人 {}",
+        LOGGER.info("Add user UID {} by {}",
                 uid,
                 SecurityContextHolder
                         .getContext()
@@ -97,17 +98,16 @@ public class UserService implements UserDetailsService {
      */
     public void updateUser(UserEntity userEntity) {
         if (userMapper.updateUser(userEntity) == 0) {
-            throw new BusinessException("用户信息更新失败");
+            throw new BusinessException("User information update failure");
         }
-        userCache.put(userEntity.getUid(), userEntity);
+        userCache.remove(userEntity.getUid());
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userMapper.getByEmail(username);
-        if (userEntity == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
+        UserEntity userEntity = userMapper
+                .getByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return User.builder()
                 .username(userEntity.getUid())
                 .password(userEntity.getPassword())

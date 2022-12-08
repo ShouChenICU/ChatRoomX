@@ -4,8 +4,9 @@ import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.RoomEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -16,11 +17,13 @@ public class RoomVO {
     @NotBlank(groups = ValidGroup.Update.class, message = "Room id cannot be empty")
     private String id;
     @NotBlank(groups = ValidGroup.Common.class, message = "Room title cannot be empty")
-    @Max(value = 64, groups = ValidGroup.Common.class, message = "Room title length cannot exceed 64")
+    @Size(max = 64, groups = ValidGroup.Common.class, message = "Room title length cannot exceed 64")
     private String title;
+    @Size(max = 1024, groups = ValidGroup.Common.class, message = "Introduction length cannot exceed 1024")
     private String introduction;
     private boolean isPublic;
     private String createDate;
+    private List<MemberVO> members;
 
     public RoomVO() {
     }
@@ -79,6 +82,15 @@ public class RoomVO {
         return this;
     }
 
+    public List<MemberVO> getMembers() {
+        return members;
+    }
+
+    public RoomVO setMembers(List<MemberVO> members) {
+        this.members = members;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "RoomVO{" +
@@ -87,6 +99,7 @@ public class RoomVO {
                 ", introduction='" + introduction + '\'' +
                 ", isPublic=" + isPublic +
                 ", createDate='" + createDate + '\'' +
+                ", members=" + members +
                 '}';
     }
 }

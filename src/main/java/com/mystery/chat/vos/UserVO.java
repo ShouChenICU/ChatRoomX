@@ -9,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 /**
@@ -22,15 +23,15 @@ public class UserVO {
     @NotBlank(groups = ValidGroup.Insert.class)
     @Email(message = "Email format error", groups = ValidGroup.Insert.class)
     private String email;
-    @Max(value = 64, message = "Nickname length cannot exceed 64", groups = ValidGroup.Common.class)
+    @Size(max = 64, message = "Nickname length cannot exceed 64", groups = ValidGroup.Common.class)
     @NotBlank(message = "Nickname cannot be empty", groups = ValidGroup.Insert.class)
     private String nickname;
     @NotBlank(message = "Password cannot be empty", groups = ValidGroup.Insert.class)
     private String password;
-    @Max(value = 16, groups = ValidGroup.Common.class, message = "Gender length cannot exceed 16")
+    @Size(max = 16, groups = ValidGroup.Common.class, message = "Gender length cannot exceed 16")
     private String gender;
     private String role;
-    @Max(value = 64, message = "Signature length cannot exceed 64", groups = ValidGroup.Common.class)
+    @Size(max = 64, message = "Signature length cannot exceed 64", groups = ValidGroup.Common.class)
     private String signature;
     private String createDate;
 

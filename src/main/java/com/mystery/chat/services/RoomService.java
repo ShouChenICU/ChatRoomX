@@ -1,9 +1,13 @@
 package com.mystery.chat.services;
 
 import com.mystery.chat.entities.RoomEntity;
+import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.RoomMapper;
+import com.mystery.chat.vos.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author shouchen
@@ -19,8 +23,15 @@ public class RoomService {
      * @param id 房间ID
      * @return 房间实体
      */
-    public RoomEntity getByID(String id) {
+    public Optional<RoomEntity> getByID(String id) {
         return roomMapper.getByID(id);
+    }
+
+    public RoomVO getRoomVOByID(String id) {
+        RoomEntity roomEntity = getByID(id).orElseThrow(() -> new BusinessException("Room not found"));
+        RoomVO roomVO = new RoomVO(roomEntity);
+        // TODO: 2022/12/8  
+        return roomVO;
     }
 
     @Autowired

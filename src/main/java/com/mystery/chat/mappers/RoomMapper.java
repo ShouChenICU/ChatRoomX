@@ -4,6 +4,8 @@ import com.mystery.chat.entities.RoomEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Optional;
+
 /**
  * @author shouchen
  * @date 2022/12/7
@@ -17,5 +19,5 @@ public interface RoomMapper {
      * @param id 房间ID
      * @return 房间实体
      */
-    RoomEntity getByID(@Param("id") String id);
+    Optional<RoomEntity> getByID(@Param("id") String id);
 }

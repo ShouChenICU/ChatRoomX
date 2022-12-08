@@ -37,8 +37,7 @@ public class UserController {
     @PreAuthorize("hasAnyRole(@roles.USER)")
     public ResultVO<UserVO> getUserByUID(@RequestParam String uid) {
         return ResultVO.of(
-                new UserVO(Optional
-                        .ofNullable(userService.getByUID(uid))
+                new UserVO(userService.getByUID(uid)
                         .orElseThrow(() -> new BusinessException("User not found"))
                 )
         );
@@ -54,7 +53,7 @@ public class UserController {
     @PreAuthorize("hasRole(@roles.ADMIN)")
     public ResultVO<?> addUser(@Validated(ValidGroup.Insert.class) @RequestBody UserVO userVO) {
         userService.addUser(new UserEntity(userVO));
-        return ResultVO.of("注册成功");
+        return ResultVO.success();
     }
 
     /**

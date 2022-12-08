@@ -4,6 +4,8 @@ import com.mystery.chat.entities.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Optional;
+
 /**
  * @author shouchen
  * @date 2022/11/30
@@ -17,7 +19,7 @@ public interface UserMapper {
      * @param uid uid
      * @return 用户
      */
-    UserEntity getByUID(@Param("uid") String uid);
+    Optional<UserEntity> getByUID(@Param("uid") String uid);
 
     /**
      * 根据Email查询用户
@@ -25,7 +27,7 @@ public interface UserMapper {
      * @param email Email
      * @return 用户
      */
-    UserEntity getByEmail(@Param("email") String email);
+    Optional<UserEntity> getByEmail(@Param("email") String email);
 
     /**
      * 新增用户

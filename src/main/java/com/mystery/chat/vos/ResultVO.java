@@ -19,8 +19,8 @@ public class ResultVO<T> {
         return new ResultVO<T>().setResult(result).setCode(OK);
     }
 
-    public static <T> ResultVO<T> success() {
-        return new ResultVO<T>().setCode(OK);
+    public static ResultVO<String> success() {
+        return ResultVO.of("success");
     }
 
     public static <T> ResultVO<T> error(String msg) {
