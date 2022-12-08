@@ -1,0 +1,29 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mystery.chat.mappers.RoomMapper">
+    <resultMap id="roomEntity" type="com.mystery.chat.entities.RoomEntity">
+        <result property="id" column="id_"/>
+        <result property="title" column="title_"/>
+        <result property="introduction" column="introduction_"/>
+        <result property="isPublic" column="is_public_"/>
+        <result property="createInstant" column="create_instant_"/>
+    </resultMap>
+
+    <sql id="room_entity">
+        id_,
+        title_,
+        introduction_,
+        is_public_,
+        create_instant_
+    </sql>
+
+    <!-- 通过房间ID查询房间 -->
+    <select id="getByID" resultMap="roomEntity">
+        SELECT
+        <include refid="room_entity"/>
+        FROM t_rooms
+        WHERE id_ = #{id}
+        LIMIT 1
+    </select>
+
+</mapper>
