@@ -6,17 +6,28 @@ package com.mystery.chat.costant;
  * @author shouchen
  * @date 2022/12/6
  */
-public interface MemberRoles {
+public final class MemberRoles {
     /**
      * 房主
      */
-    String OWNER = "OWNER";
+    public static String OWNER = "OWNER";
     /**
      * 管理员
      */
-    String ADMIN = "ADMIN";
+    public static String ADMIN = "ADMIN";
     /**
      * 群员
      */
-    String MEMBER = "MEMBER";
+    public static String MEMBER = "MEMBER";
+
+    public static int calcWeight(String role) {
+        if (OWNER.equalsIgnoreCase(role)) {
+            return 30;
+        } else if (ADMIN.equalsIgnoreCase(role)) {
+            return 20;
+        } else if (MEMBER.equalsIgnoreCase(role)) {
+            return 10;
+        }
+        return 0;
+    }
 }

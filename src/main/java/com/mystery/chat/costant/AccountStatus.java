@@ -19,4 +19,8 @@ public interface AccountStatus {
      * 未激活
      */
     String INACTIVE = "INACTIVE";
+    /**
+     * 已删除
+     */
+    String DELETED = "DELETED";
 }

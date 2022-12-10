@@ -41,9 +41,27 @@
         .loginCard {
             padding: 1rem;
             border-radius: 7px;
-            box-shadow: 0 0 7px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 13px 29px rgba(0, 0, 0, 0.6), inset 0 0 3px rgba(255, 255, 255, 0.4);
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
+        }
+
+        .loginCard input {
+            border: none;
+            outline: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .loginCard input:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .loginCard input:focus {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
@@ -55,12 +73,12 @@
         <div>
             <div class="mb-3">
                 <label class="form-label" for="username">Email:</label><br>
-                <input class="form-control form-control-sm" id="username" type="email" v-model="username"
+                <input id="username" type="email" v-model="username" autocomplete="off" autofocus
                        placeholder="Please enter your email"/>
             </div>
             <div>
                 <label class="form-label" for="password">Password:</label><br>
-                <input class="form-control form-control-sm" id="password" type="password" v-model="password"
+                <input id="password" type="password" v-model="password" autocomplete="off"
                        placeholder="Please enter your password" @keydown="enterKey($event)"/>
             </div>
             <button class="btn btn-sm btn-link p-0" @click="forgetPwd">Forget password?</button>

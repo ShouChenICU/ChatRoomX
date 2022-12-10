@@ -57,6 +57,7 @@
                 </div>
             </div>
             <hr class="m-0">
+            <!-- 房间列表 -->
             <div id="room-list" class="overflow-auto flex-grow-1 scrollBeautiful">
                 <div class="d-flex flex-column px-1" v-for="i in 50">
                     <div class="roomBtn">
@@ -100,7 +101,7 @@
                 msg2
             </div>
             <div class="msgBar">
-                msg
+                <textarea></textarea>
             </div>
         </div>
         <!-- 文件面板 -->
@@ -112,6 +113,10 @@
 </body>
 
 <script>
+    axios.interceptors.response.use(
+        res => res,
+        err => Promise.reject(err)
+    )
     const app = Vue.createApp({
         data: () => {
             return {

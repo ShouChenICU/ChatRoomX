@@ -1,5 +1,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.mystery.chat.mappers.MemberMapper">
+    <resultMap id="memberEntity" type="com.mystery.chat.entities.MemberEntity">
+        <result property="uid" column="uid_"/>
+        <result property="roomID" column="room_id_"/>
+        <result property="role" column="role_"/>
+        <result property="label" column="label_"/>
+        <result property="joinInstant" column="join_instant_"/>
+    </resultMap>
 
+    <sql id="member-entity">
+        uid_,
+        room_id_,
+        role_,
+        label_,
+        join_instant_
+    </sql>
+
+    <!-- 根据房间ID查询成员列表 -->
+    <select id="listByRoomID" resultMap="memberEntity">
+        SELECT
+        <include refid="member-entity"/>
+        FROM t_members
+        WHERE
+        room_id_ = #{roomID}
+    </select>
 </mapper>
