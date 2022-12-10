@@ -16,6 +16,7 @@ public class UserEntity {
     private String gender;
     private String role;
     private String signature;
+    private String status;
     private long createInstant;
 
     public UserEntity() {
@@ -94,6 +95,15 @@ public class UserEntity {
         return this;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public UserEntity setStatus(String status) {
+        this.status = status;
+        return this;
+    }
+
     public long getCreateInstant() {
         return createInstant;
     }
@@ -130,6 +140,7 @@ public class UserEntity {
                 ", gender='" + gender + '\'' +
                 ", role='" + role + '\'' +
                 ", signature='" + signature + '\'' +
+                ", status='" + status + '\'' +
                 ", createInstant=" + createInstant +
                 '}';
     }

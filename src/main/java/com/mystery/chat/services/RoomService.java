@@ -6,6 +6,7 @@ import com.mystery.chat.mappers.RoomMapper;
 import com.mystery.chat.vos.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -27,6 +28,13 @@ public class RoomService {
         return roomMapper.getByID(id);
     }
 
+    /**
+     * 根据房间ID查询房间
+     *
+     * @param id 房间ID
+     * @return 房间VO
+     */
+    @Transactional(rollbackFor = Exception.class)
     public RoomVO getRoomVOByID(String id) {
         RoomEntity roomEntity = getByID(id).orElseThrow(() -> new BusinessException("Room not found"));
         RoomVO roomVO = new RoomVO(roomEntity);

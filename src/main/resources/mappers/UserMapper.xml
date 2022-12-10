@@ -9,6 +9,7 @@
         <result property="gender" column="gender_"/>
         <result property="role" column="role_"/>
         <result property="signature" column="signature_"/>
+        <result property="status" column="status_"/>
         <result property="createInstant" column="create_instant_"/>
     </resultMap>
 
@@ -20,6 +21,7 @@
         gender_,
         role_,
         signature_,
+        status_,
         create_instant_
     </sql>
 
@@ -35,6 +37,7 @@
         #{user.gender},
         #{user.role},
         #{user.signature},
+        #{user.status},
         #{user.createInstant}
         )
     </insert>

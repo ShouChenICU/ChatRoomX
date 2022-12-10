@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
 
 /**
  * 线程安全的LRU算法的缓存
@@ -62,6 +63,24 @@ public class LRUCache<K, V> {
         } finally {
             readWriteLock.readLock().unlock();
         }
+    }
+
+    public V getElsePut(K key, Supplier<V> supplier) {
+        V value;
+        readWriteLock.writeLock().lock();
+        try {
+            value = cache.get(key);
+            if (value == null) {
+                value = supplier.get();
+                if (value == null) {
+                    return null;
+                }
+                cache.put(key, value);
+            }
+        } finally {
+            readWriteLock.writeLock().unlock();
+        }
+        return value;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.mystery.chat.services;
 
+import com.mystery.chat.costant.AccountStatus;
 import com.mystery.chat.costant.Roles;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
@@ -46,13 +47,8 @@ public class UserService implements UserDetailsService {
      * @return 用户
      */
     public Optional<UserEntity> getByUID(String uid) {
-        UserEntity userEntity = userCache.get(uid);
-        if (userEntity == null) {
-            Optional<UserEntity> user = userMapper.getByUID(uid);
-            user.ifPresent(entity -> userCache.put(uid, entity));
-            return user;
-        }
-        return Optional.of(userEntity);
+        return Optional.of(userCache.getElsePut(uid,
+                () -> userMapper.getByUID(uid).orElse(null)));
     }
 
     /**
@@ -73,11 +69,12 @@ public class UserService implements UserDetailsService {
         } while (getByUID(uid).isPresent());
         // 初始化
         userEntity.setUid(uid)
-                .setCreateInstant(System.currentTimeMillis())
                 .setPassword(passwordEncoder
                         .encode(Objects.requireNonNullElse(userEntity.getPassword(), ""))
                 )
-                .setRole(Roles.ROLE_USER);
+                .setRole(Roles.ROLE_EMPTY)
+                .setStatus(AccountStatus.INACTIVE)
+                .setCreateInstant(System.currentTimeMillis());
         if (userMapper.addUser(userEntity) == 0) {
             throw new BusinessException("Add failure");
         }
@@ -111,7 +108,11 @@ public class UserService implements UserDetailsService {
         return User.builder()
                 .username(userEntity.getUid())
                 .password(userEntity.getPassword())
-                .authorities(userEntity.getRole())
+                .authorities(
+                        AccountStatus.NORMAL.equalsIgnoreCase(userEntity.getStatus())
+                                ? userEntity.getRole()
+                                : Roles.ROLE_EMPTY
+                )
                 .build();
     }
 
