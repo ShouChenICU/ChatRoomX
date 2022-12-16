@@ -29,17 +29,18 @@
     <insert id="addUser">
         INSERT INTO t_users
         (<include refid="user_entity"/>)
-        VALUES (
-        #{user.uid},
-        #{user.email},
-        #{user.nickname},
-        #{user.password},
-        #{user.gender},
-        #{user.role},
-        #{user.signature},
-        #{user.status},
-        #{user.createInstant}
-        )
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{user.uid},
+            #{user.email},
+            #{user.nickname},
+            #{user.password},
+            #{user.gender},
+            #{user.role},
+            #{user.signature},
+            #{user.status},
+            #{user.createInstant},
+        </trim>
     </insert>
 
     <!-- 更新用户 -->

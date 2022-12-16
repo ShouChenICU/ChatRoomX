@@ -28,7 +28,7 @@
         <div style="background: #86C166">
             <!--            <button class="btn btn-sm float-end m-1" @click="showSideBar"><</button>-->
             <div class="ps-3 pt-3 d-flex flex-row align-items-center">
-                <img decoding="async" @click="a" class="avatar" src="res/avatar.jpg" alt="avatar">
+                <img decoding="async" class="avatar" src="res/avatar.jpg" alt="avatar">
                 <div style="margin-left: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1">
                     <span>nickname</span><br>
                     <small title="signature">signature...</small>
@@ -58,8 +58,9 @@
             </div>
             <hr class="m-0">
             <!-- 房间列表 -->
-            <div id="room-list" class="overflow-auto flex-grow-1 scrollBeautiful">
-                <div class="d-flex flex-column px-1" v-for="i in 50">
+            <div id="room-list" class="overflow-auto flex-grow-1 d-flex flex-column scrollBeautiful"
+                 @scroll="loadMoreRooms(false)">
+                <div class="d-flex flex-column px-1" v-for="i in 10">
                     <div class="roomBtn">
                         <img decoding="async" src="res/avatar.jpg" alt="avatar">
                         <div>
@@ -68,6 +69,11 @@
                         </div>
                     </div>
                 </div>
+                <div class="flex-grow-1"></div>
+                <div class="text-center" @click="loadMoreRooms(true)">
+                    <i class="spinner-border spinner-border-sm visually-hidden"></i>
+                    <small>ฅ•ω•ฅ</small>
+                </div>
             </div>
         </div>
         <!-- 底部菜单 -->
@@ -75,6 +81,7 @@
 
     <!-- 右侧内容面板 -->
     <div id="rightBody" class="rightBody">
+        <!-- 顶栏 -->
         <div class="topBar">
             <div class="d-flex align-items-center">
                 <img src="res/more.svg" class="btn btn-sm"
@@ -86,22 +93,43 @@
                 <img decoding="async" src="res/avatar.jpg" alt="avatar" class="avatar-xs">
                 <span class="ms-2">Room name</span>
             </div>
-            <div class="d-flex align-items-center">
-                <div class="btn-group">
-                    <button class="btn btn-warning"><i class="fa fa-pie-chart"></i></button>
-                    <button class="btn btn-success"><i class="fa fa-user-o"></i></button>
-                    <button class="btn btn-light"><i class="fa fa-list-ul"></i></button>
-                </div>
+            <div>
             </div>
         </div>
         <!-- 聊天面板 -->
         <div id="chat-room" class="contentBody">
-            <div class="flex-grow-1 p-2">
-                msg1
-                msg2
+            <!-- 消息列表 -->
+            <div id="msg-list" class="flex-grow-1 p-2 overflow-auto scrollBeautiful d-flex flex-column-reverse"
+                 style="scroll-behavior: smooth">
+                <div class="message-left" v-for="i in 3">
+                    <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
+                    <div>
+                        <small>
+                            <span style="background-color: peachpuff;border-radius: 3px;padding: 0 0.25rem">群主</span>
+                            <span>&nbsp;Nickname&nbsp;</span>
+                            <span style="color: gray">21:27</span>
+                        </small>
+                        <p>message... {{i}}</p>
+                    </div>
+                </div>
+                <div class="message-right">
+                    <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
+                    <div>
+                        <small>
+                            <span style="background-color: skyblue;border-radius: 3px;padding: 0 0.25rem">管理员</span>
+                            <span>&nbsp;Nickname&nbsp;</span>
+                            <span style="color: gray">21:26</span>
+                        </small>
+                        <p>message...sadkczxhbkad</p>
+                    </div>
+                </div>
             </div>
+            <!-- 发送消息框 -->
             <div class="msgBar">
-                <textarea></textarea>
+                <textarea id="input" class="scrollBeautiful" v-model="msgInput"></textarea>
+                <div class="ms-2 d-flex flex-column-reverse">
+                    <button class="btn btn-sm btn-success" @click="sendMsg">Send</button>
+                </div>
             </div>
         </div>
         <!-- 文件面板 -->
@@ -116,59 +144,83 @@
     axios.interceptors.response.use(
         res => res,
         err => Promise.reject(err)
-    )
+    );
     const app = Vue.createApp({
         data: () => {
             return {
                 name: 'asdq',
                 isTempCanClick: true,
-                isSideBarShow: true
+                isSideBarShow: true,
+                isLoadRooms: false,
+                msgInput: ''
             }
         },
         methods: {
-            a() {
-                let dom = document.getElementById('room-list')
-                dom.scrollTo(0, dom.scrollHeight)
+            sendMsg() {
+                alert(this.msgInput)
+                let msgList=document.getElementById('msg-list');
+                msgList.scroll(0, 0);
+            },
+            loadMoreRooms(force) {
+                if (!this.isLoadRooms) {
+                    let roomList = document.getElementById('room-list');
+                    if (force || roomList.scrollHeight - roomList.clientHeight - roomList.scrollTop < 1) {
+                        console.log('active')
+                    }
+                }
             },
             showSideBar() {
                 if (!this.isTempCanClick) {
-                    return
+                    return;
                 }
                 const sideBar = document.getElementById('side-bar');
-                const rightBody = document.getElementById('rightBody')
-                const template = document.getElementById('template')
+                const rightBody = document.getElementById('rightBody');
+                const template = document.getElementById('template');
                 if (this.isSideBarShow) {
-                    sideBar.style.left = '-16rem'
-                    rightBody.style.left = '0'
-                    // if (document.body.clientWidth < 768) {
-                    template.style.backgroundColor = 'rgba(0, 0, 0, 0)'
-                    template.style.backdropFilter = ''
-                    this.isTempCanClick = false
+                    sideBar.style.left = '-16rem';
+                    rightBody.style.left = '0';
+                    template.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+                    template.style.backdropFilter = '';
+                    this.isTempCanClick = false;
                     const id = setInterval(() => {
-                        template.style.height = '0'
-                        this.isTempCanClick = true
-                        clearInterval(id)
+                        template.style.height = '0';
+                        this.isTempCanClick = true;
+                        clearInterval(id);
                     }, 1000);
-                    // }
                 } else {
                     sideBar.style.left = '0'
                     if (document.body.clientWidth < 768) {
-                        template.style.height = '100%'
-                        template.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-                        template.style.backdropFilter = 'blur(3px)'
+                        template.style.height = '100%';
+                        template.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+                        template.style.backdropFilter = 'blur(3px)';
                     } else {
-                        rightBody.style.left = '16rem'
+                        rightBody.style.left = '16rem';
                     }
                 }
-                this.isSideBarShow = !this.isSideBarShow
+                this.isSideBarShow = !this.isSideBarShow;
             }
         },
         mounted() {
             if (document.body.clientWidth < 768) {
-                this.showSideBar()
+                this.showSideBar();
+            }
+            let input = document.getElementById('input');
+            input.addEventListener('input', ev => {
+                input.style.height = '2rem';
+                let sH = input.scrollHeight;
+                if (sH > 100) {
+                    input.style.height = '100px';
+                } else {
+                    input.style.height = sH + 'px';
+                }
+            });
+            input.onkeydown = ev => {
+                if (ev.ctrlKey && ev.code === 'Enter') {
+                    this.sendMsg();
+                }
             }
         }
-    })
-    app.mount('#app')
+    });
+    app.mount('#app');
 </script>
 </html>

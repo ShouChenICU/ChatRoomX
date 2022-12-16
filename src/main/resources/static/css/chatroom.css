@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
-    transition: left 1s cubic-bezier(0.2, 0.6, 0.1, 1);
+    transition: left 0.75s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .rightBody {
@@ -43,7 +43,7 @@
     display: flex;
     flex-direction: column;
     align-content: center;
-    transition: left 1s cubic-bezier(0.2, 0.6, 0.1, 1);
+    transition: left 0.75s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .topBar {
@@ -60,6 +60,7 @@
 .contentBody {
     z-index: 0;
     flex-grow: 1;
+    min-height: 0;
     display: flex;
     flex-direction: column;
 }
@@ -70,7 +71,6 @@
     box-shadow: 0 0 3px gray;
     display: flex;
     flex-direction: row;
-
 }
 
 .msgBar textarea {
@@ -80,8 +80,51 @@
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
     padding: 0.25rem;
     flex-grow: 1;
+    min-height: 1rem;
     height: 2rem;
     resize: none;
+}
+
+.message-left {
+    display: flex;
+    flex-direction: row;
+    margin: 0 50px 1rem 0;
+}
+
+.message-left p {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem;
+    word-break: break-all;
+    margin: 0.25rem 0 0 0;
+}
+
+.message-left div {
+    margin-left: 0.5rem;
+}
+
+.message-right {
+    display: flex;
+    flex-direction: row-reverse;
+    margin: 0 0 1rem 50px;
+}
+
+.message-right p {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem;
+    word-break: break-all;
+    margin: 0.25rem 0 0 0;
+}
+
+.message-right div {
+    margin-right: 0.5rem;
+}
+
+.message-right small {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
 }
 
 .avatar {
@@ -162,7 +205,7 @@
     height: 0;
     z-index: 7;
     background: rgba(0, 0, 0, 0);
-    transition: background-color 0.5s cubic-bezier(0.2, 0.6, 0.1, 1);
+    transition: background-color 0.75s cubic-bezier(0.2, 0.6, 0.1, 1);
 }
 
 .scrollBeautiful {

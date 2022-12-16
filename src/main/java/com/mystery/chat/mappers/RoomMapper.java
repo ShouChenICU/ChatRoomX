@@ -20,4 +20,20 @@ public interface RoomMapper {
      * @return 房间实体
      */
     Optional<RoomEntity> getByID(@Param("id") String id);
+
+    /**
+     * 添加房间
+     *
+     * @param room 房间
+     * @return 更新的条数
+     */
+    int addRoom(@Param("room") RoomEntity room);
+
+    /**
+     * 查询某人拥有的房间数量
+     *
+     * @param uid 用户UID
+     * @return 房间数量
+     */
+    int countByUID(@Param("uid") String uid);
 }

@@ -10,6 +10,7 @@ import com.mystery.chat.utils.UIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +39,20 @@ public class UserService implements UserDetailsService {
     public UserService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
         this.userCache = new LRUCache<>(255);
+    }
+
+    /**
+     * 获取当前登陆的用户信息
+     *
+     * @return 当前登陆的用户信息
+     */
+    public Optional<UserEntity> me() {
+        Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
+        if (authentication != null) {
+            return getByUID((String) authentication.getPrincipal());
+        }
+        return Optional.empty();
     }
 
     /**

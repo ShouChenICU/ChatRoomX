@@ -1,6 +1,6 @@
 package com.mystery.chat.security.filters;
 
-import com.mystery.chat.utils.JWTUtils;
+import com.mystery.chat.utils.TokenUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AccountExpiredException;
@@ -39,7 +39,7 @@ public class AuthenticationFilter implements Filter {
                 .map(Cookie::getValue)
                 .findFirst()
                 .orElseThrow(() -> new AccountExpiredException(""));
-        Claims claims = JWTUtils.parseToken(token);
+        Claims claims = TokenUtils.parseToken(token);
         SecurityContextHolder
                 .getContext()
                 .setAuthentication(UsernamePasswordAuthenticationToken

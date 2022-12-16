@@ -20,4 +20,12 @@ public interface MemberMapper {
      * @return 成员列表
      */
     List<MemberEntity> listByRoomID(@Param("roomID") String roomID);
+
+    /**
+     * 添加成员
+     *
+     * @param member 成员
+     * @return 更新的行数
+     */
+    int addMember(@Param("member") MemberEntity member);
 }

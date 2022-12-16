@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author shouchen
  * @date 2022/12/3
  */
-public class JWTUtils {
+public class TokenUtils {
     private static final Key JWT_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS384);
     private static final long JWT_EXPIRE_OFFSET = TimeUnit.MINUTES.toMillis(30);
 

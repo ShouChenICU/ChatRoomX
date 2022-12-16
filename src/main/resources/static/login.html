@@ -73,12 +73,12 @@
         <div>
             <div class="mb-3">
                 <label class="form-label" for="username">Email:</label><br>
-                <input id="username" type="email" v-model="username" autocomplete="off" autofocus
+                <input id="username" type="email" v-model="username" autofocus
                        placeholder="Please enter your email"/>
             </div>
             <div>
                 <label class="form-label" for="password">Password:</label><br>
-                <input id="password" type="password" v-model="password" autocomplete="off"
+                <input id="password" type="password" v-model="password"
                        placeholder="Please enter your password" @keydown="enterKey($event)"/>
             </div>
             <button class="btn btn-sm btn-link p-0" @click="forgetPwd">Forget password?</button>

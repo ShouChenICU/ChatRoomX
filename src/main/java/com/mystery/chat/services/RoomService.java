@@ -1,17 +1,19 @@
 package com.mystery.chat.services;
 
+import com.mystery.chat.configures.AppConfig;
 import com.mystery.chat.costant.MemberRoles;
+import com.mystery.chat.entities.MemberEntity;
 import com.mystery.chat.entities.RoomEntity;
+import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.RoomMapper;
-import com.mystery.chat.vos.MemberVO;
+import com.mystery.chat.utils.UIDGenerator;
 import com.mystery.chat.vos.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author shouchen
@@ -20,7 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class RoomService {
     private RoomMapper roomMapper;
+    private UserService userService;
     private MemberService memberService;
+    private AppConfig appConfig;
 
     /**
      * 通过房间ID查询房间
@@ -39,7 +43,22 @@ public class RoomService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void addRoom(RoomEntity roomEntity) {
-
+        UserEntity userEntity = userService.me().orElseThrow(() -> new BusinessException("User not found"));
+        if (roomMapper.countByUID(userEntity.getUid()) >= appConfig.maxRoomsForUser) {
+            throw new BusinessException("You have created the maximum number of " + appConfig.maxRoomsForUser + " rooms");
+        }
+        String id;
+        do {
+            id = UIDGenerator.randomUID();
+        } while (getByID(id).isPresent());
+        roomEntity.setId(id).setCreateInstant(System.currentTimeMillis());
+        roomMapper.addRoom(roomEntity);
+        memberService.addMember(new MemberEntity()
+                .setUid(userEntity.getUid())
+                .setRoomID(id)
+                .setRole(MemberRoles.OWNER)
+                .setLabel("")
+                .setJoinInstant(System.currentTimeMillis()));
     }
 
     /**
@@ -52,14 +71,8 @@ public class RoomService {
     public RoomVO getRoomVOByID(String roomID) {
         return new RoomVO(getByID(roomID)
                 .orElseThrow(() -> new BusinessException("Room not found")))
-                .setMembers(memberService
-                        .listByRoomID(roomID)
-                        .stream()
-                        .sorted((a, b) -> MemberRoles.calcWeight(b.getRole())
-                                - MemberRoles.calcWeight(a.getRole())
-                                + Long.compare(a.getJoinInstant(), b.getJoinInstant()))
-                        .map(MemberVO::new)
-                        .collect(Collectors.toList())
+                .setMembers(
+                        memberService.listVOsByRoomID(roomID)
                 );
     }
 
@@ -70,8 +83,20 @@ public class RoomService {
     }
 
     @Autowired
+    public RoomService setUserService(UserService userService) {
+        this.userService = userService;
+        return this;
+    }
+
+    @Autowired
     public RoomService setMemberService(MemberService memberService) {
         this.memberService = memberService;
+        return this;
+    }
+
+    @Autowired
+    public RoomService setAppConfig(AppConfig appConfig) {
+        this.appConfig = appConfig;
         return this;
     }
 }

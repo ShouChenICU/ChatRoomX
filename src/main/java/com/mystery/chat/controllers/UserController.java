@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import javax.annotation.security.PermitAll;
 
 /**
+ * 用户接口
+ *
  * @author shouchen
  * @date 2022/11/23
  */
@@ -26,6 +28,22 @@ import java.util.Optional;
 @RequestMapping("/api/user")
 public class UserController {
     private UserService userService;
+
+    /**
+     * 查询当前登陆用户的信息
+     *
+     * @return 当前登陆用户信息
+     */
+    @PostMapping("/me")
+    @PermitAll
+    public ResultVO<UserVO> me() {
+        return ResultVO.of(
+                new UserVO(userService
+                        .me()
+                        .orElseThrow(() -> new BusinessException("User not found"))
+                )
+        );
+    }
 
     /**
      * 根据uid查询用户实体

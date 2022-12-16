@@ -11,6 +11,7 @@ import com.mystery.chat.utils.DateTimeFormatUtils;
 public class MemberVO {
     private String uid;
     private String roomID;
+    private String nickname;
     private String role;
     private String roleValue;
     private String label;
@@ -43,6 +44,15 @@ public class MemberVO {
 
     public MemberVO setRoomID(String roomID) {
         this.roomID = roomID;
+        return this;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public MemberVO setNickname(String nickname) {
+        this.nickname = nickname;
         return this;
     }
 
@@ -87,6 +97,7 @@ public class MemberVO {
         return "MemberVO{" +
                 "uid='" + uid + '\'' +
                 ", roomID='" + roomID + '\'' +
+                ", nickname='" + nickname + '\'' +
                 ", role='" + role + '\'' +
                 ", roleValue='" + roleValue + '\'' +
                 ", label='" + label + '\'' +

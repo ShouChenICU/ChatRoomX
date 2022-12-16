@@ -17,6 +17,20 @@
         create_instant_
     </sql>
 
+    <!-- 添加房间 -->
+    <insert id="addRoom">
+        INSERT INTO t_rooms
+        (<include refid="room_entity"/>)
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{room.id},
+            #{room.title},
+            #{room.introduction},
+            #{room.isPublic},
+            #{room.createInstant},
+        </trim>
+    </insert>
+
     <!-- 通过房间ID查询房间 -->
     <select id="getByID" resultMap="roomEntity">
         SELECT
@@ -26,4 +40,10 @@
         LIMIT 1
     </select>
 
+    <!-- 查询某人拥有的房间数量 -->
+    <select id="countByUID" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM t_members
+        WHERE uid_ = #{uid}
+    </select>
 </mapper>
