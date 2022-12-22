@@ -90,10 +90,10 @@ public class UserController {
 
     @PostMapping("/delete")
     @PreAuthorize("hasRole(@roles.ADMIN)")
-    public String deleteUserByUID(@RequestParam String uid) {
+    public ResultVO<?> deleteUserByUID(@RequestParam String uid) {
         // TODO: 2022/12/3  
 //        throw new BusinessException("not fount");
-        return "del user";
+        return ResultVO.error("");
     }
 
     @Autowired

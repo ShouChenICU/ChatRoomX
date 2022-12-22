@@ -19,14 +19,19 @@ public final class UIDGenerator {
      * @return 随机UID
      */
     public static String randomUID() {
-        byte[] bytes = new byte[6];
         SecureRandom random = new SecureRandom();
-        String uid;
-        do {
-            random.nextBytes(bytes);
-            uid = Base64.getEncoder().encodeToString(bytes);
-        } while (!uid.matches("[\\da-zA-Z]*"));
-        return uid;
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            int code = random.nextInt(62);
+            if (code < 10) {
+                builder.append(code);
+            } else if (code < 36) {
+                builder.append((char) ('A' + code - 10));
+            } else {
+                builder.append((char) ('a' + code - 36));
+            }
+        }
+        return builder.toString();
     }
 
     /**

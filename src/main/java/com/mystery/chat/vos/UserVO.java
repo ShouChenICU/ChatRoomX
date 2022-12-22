@@ -31,7 +31,7 @@ public class UserVO {
     @Size(max = 16, groups = ValidGroup.Common.class, message = "Gender length cannot exceed 16")
     private String gender;
     private String role;
-    @Size(max = 64, message = "Signature length cannot exceed 64", groups = ValidGroup.Common.class)
+    @Size(max = 128, message = "Signature length cannot exceed 128", groups = ValidGroup.Common.class)
     private String signature;
     private String createDate;
 

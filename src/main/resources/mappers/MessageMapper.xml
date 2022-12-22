@@ -1,0 +1,30 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.mystery.chat.mappers.MessageMapper">
+    <resultMap id="memberEntity" type="com.mystery.chat.entities.MessageEntity">
+        <result property="id" column="id_"/>
+        <result property="roomID" column="room_id_"/>
+        <result property="uid" column="uid_"/>
+        <result property="type" column="type_"/>
+        <result property="content" column="content_"/>
+        <result property="instant" column="instant_"/>
+    </resultMap>
+
+    <sql id="member-entity">
+        id_,
+        room_id_,
+        uid_,
+        type_,
+        content_,
+        instant_
+    </sql>
+
+    <select id="getMaxID" resultType="int">
+        SELECT id_
+        FROM t_messages
+        UNION
+        SELECT 0 AS id_
+        ORDER BY id_ DESC
+        LIMIT 1
+    </select>
+</mapper>

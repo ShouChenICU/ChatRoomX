@@ -66,21 +66,12 @@ public class LRUCache<K, V> {
     }
 
     public V getElsePut(K key, Supplier<V> supplier) {
-        V value;
         readWriteLock.writeLock().lock();
         try {
-            value = cache.get(key);
-            if (value == null) {
-                value = supplier.get();
-                if (value == null) {
-                    return null;
-                }
-                cache.put(key, value);
-            }
+            return cache.computeIfAbsent(key, k -> supplier.get());
         } finally {
             readWriteLock.writeLock().unlock();
         }
-        return value;
     }
 
     @Override
