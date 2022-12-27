@@ -69,9 +69,8 @@ public class UserController {
      */
     @PostMapping("/add")
     @PreAuthorize("hasRole(@roles.ADMIN)")
-    public ResultVO<?> addUser(@Validated(ValidGroup.Insert.class) @RequestBody UserVO userVO) {
-        userService.addUser(new UserEntity(userVO));
-        return ResultVO.success();
+    public ResultVO<String> addUser(@Validated(ValidGroup.Insert.class) @RequestBody UserVO userVO) {
+        return ResultVO.of(userService.addUser(new UserEntity(userVO)));
     }
 
     /**

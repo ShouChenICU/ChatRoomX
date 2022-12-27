@@ -23,7 +23,8 @@ public interface MessageMapper {
      * @param size    长度
      * @return 消息列表
      */
-    List<MessageVO> listMsgVOs(@Param("roomID") String roomID,
-                               @Param("instant") long instant,
-                               @Param("size") int size);
+    List<MessageVO> listMsgVOs(
+            @Param("roomID") String roomID,
+            @Param("instant") long instant,
+            @Param("size") int size);
 }

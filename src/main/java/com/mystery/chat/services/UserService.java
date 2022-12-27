@@ -34,7 +34,7 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final PasswordEncoder passwordEncoder;
-    private final LRUCache<String, UserEntity> userCache;
+    private final LRUCache<String, Optional<UserEntity>> userCache;
     private UserMapper userMapper;
 
     public UserService(PasswordEncoder passwordEncoder, AppConfig appConfig) {
@@ -63,17 +63,19 @@ public class UserService implements UserDetailsService {
      * @return 用户
      */
     public Optional<UserEntity> getByUID(String uid) {
-        return Optional.of(userCache.getElsePut(uid,
-                () -> userMapper.getByUID(uid).orElse(null)));
+        return userCache.getElsePut(uid,
+                () -> userMapper.getByUID(uid)
+        );
     }
 
     /**
      * 添加用户
      *
      * @param userEntity 用户实体
+     * @return 用户UID
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addUser(UserEntity userEntity) {
+    public String addUser(UserEntity userEntity) {
         userMapper.getByEmail(userEntity.getEmail())
                 .ifPresent(entity -> {
                     throw new BusinessException("Email already exists");
@@ -94,7 +96,6 @@ public class UserService implements UserDetailsService {
         if (userMapper.addUser(userEntity) == 0) {
             throw new BusinessException("Add failure");
         }
-        userCache.put(uid, userEntity);
         LOGGER.info("Add user UID {} by {}",
                 uid,
                 SecurityContextHolder
@@ -102,6 +103,7 @@ public class UserService implements UserDetailsService {
                         .getAuthentication()
                         .getPrincipal()
         );
+        return uid;
     }
 
     /**
