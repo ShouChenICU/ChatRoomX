@@ -1,5 +1,6 @@
 package com.mystery.chat.vos;
 
+import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.MessageEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 
@@ -14,12 +15,12 @@ import javax.validation.constraints.NotNull;
  */
 public class MessageVO {
     private long id;
-    @NotBlank(message = "Room id cannot be empty")
+    @NotBlank(message = "Room id cannot be empty", groups = ValidGroup.Insert.class)
     private String roomID;
     private String uid;
     private String sender;
     private String type;
-    @NotNull(message = "Content cannot be null")
+    @NotNull(message = "Content cannot be null", groups = ValidGroup.Insert.class)
     private String content;
     private String dateTime;
     private long instant;

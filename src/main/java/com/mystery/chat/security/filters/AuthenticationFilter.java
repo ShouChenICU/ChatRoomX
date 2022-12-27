@@ -1,8 +1,12 @@
 package com.mystery.chat.security.filters;
 
+import com.alibaba.fastjson.JSON;
 import com.mystery.chat.utils.TokenUtils;
+import com.mystery.chat.vos.ResultVO;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AccountExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -20,6 +24,8 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
+ * 权限认证过滤器
+ *
  * @author shouchen
  * @date 2022/11/27
  */
@@ -29,6 +35,19 @@ public class AuthenticationFilter implements Filter {
         try {
             checkAuthority((HttpServletRequest) request);
         } catch (Exception ignore) {
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            if (HttpMethod.GET.matches(httpServletRequest.getMethod())) {
+                chain.doFilter(request, response);
+                return;
+            }
+            response.getWriter().write(JSON.toJSONString(
+                    ResultVO.error(
+                            HttpStatus.UNAUTHORIZED.toString()
+                    ).setCode(
+                            HttpStatus.UNAUTHORIZED.value()
+                    )
+            ));
+            return;
         }
         chain.doFilter(request, response);
     }

@@ -1,5 +1,6 @@
 package com.mystery.chat.services;
 
+import com.mystery.chat.configures.AppConfig;
 import com.mystery.chat.costant.AccountStatus;
 import com.mystery.chat.costant.Roles;
 import com.mystery.chat.entities.UserEntity;
@@ -36,9 +37,9 @@ public class UserService implements UserDetailsService {
     private final LRUCache<String, UserEntity> userCache;
     private UserMapper userMapper;
 
-    public UserService(PasswordEncoder passwordEncoder) {
+    public UserService(PasswordEncoder passwordEncoder, AppConfig appConfig) {
         this.passwordEncoder = passwordEncoder;
-        this.userCache = new LRUCache<>(255);
+        this.userCache = new LRUCache<>(appConfig.userCacheSize);
     }
 
     /**

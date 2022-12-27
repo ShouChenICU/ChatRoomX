@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author shouchen
@@ -28,4 +29,13 @@ public interface MemberMapper {
      * @return 更新的行数
      */
     int addMember(@Param("member") MemberEntity member);
+
+    /**
+     * 查询成员
+     *
+     * @param uid    用户id
+     * @param roomID 房间id
+     * @return 成员
+     */
+    Optional<MemberEntity> get(@Param("uid") String uid, @Param("roomID") String roomID);
 }

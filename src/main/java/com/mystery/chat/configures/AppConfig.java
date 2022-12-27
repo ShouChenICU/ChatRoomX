@@ -8,9 +8,11 @@ import org.springframework.context.annotation.PropertySource;
  * @author shouchen
  * @date 2022/12/11
  */
-@PropertySource("file:./app.conf")
+@PropertySource("file:app.conf")
 @Configuration
 public class AppConfig {
     @Value("${maxRoomsForUser:10}")
     public int maxRoomsForUser;
+    @Value("${userCacheSize:255}")
+    public int userCacheSize;
 }

@@ -27,4 +27,25 @@
         ORDER BY id_ DESC
         LIMIT 1
     </select>
+
+    <!-- 查询消息列表 -->
+    <select id="listMsgVOs" resultType="com.mystery.chat.vos.MessageVO">
+        SELECT
+        m.id_ AS id,
+        m.room_id_ AS roomID,
+        m.uid_ AS uid,
+        u.nickname_ AS sender,
+        m.type_ AS type,
+        m.content_ AS content,
+        m.instant_ AS instant
+        FROM t_messages AS m
+        LEFT JOIN t_users AS u
+        ON m.uid_ = u.uid_
+        WHERE m.room_id_ = #{roomID}
+        <if test="instant != 0">
+            AND m.instant_ &lt;= #{instant}
+        </if>
+        ORDER BY m.instant_ DESC
+        LIMIT #{size}
+    </select>
 </mapper>

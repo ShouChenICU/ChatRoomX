@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoomController {
     private RoomService roomService;
 
+    /**
+     * 根据房间id查询房间
+     *
+     * @param id 房间id
+     * @return 房间信息
+     */
     @PostMapping("/get")
     @PreAuthorize("hasAnyRole(@roles.USER)")
     public ResultVO<RoomVO> getByID(@RequestParam String id) {
