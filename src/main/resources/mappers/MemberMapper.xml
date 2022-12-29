@@ -18,7 +18,7 @@
     </sql>
 
     <!-- 添加成员 -->
-    <insert id="addMember">
+    <insert id="insert">
         INSERT INTO t_members
         (<include refid="member-entity"/>)
         VALUES

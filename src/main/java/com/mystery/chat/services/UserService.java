@@ -93,7 +93,7 @@ public class UserService implements UserDetailsService {
                 .setRole(Roles.ROLE_EMPTY)
                 .setStatus(AccountStatus.INACTIVE)
                 .setCreateInstant(System.currentTimeMillis());
-        if (userMapper.addUser(userEntity) == 0) {
+        if (userMapper.insert(userEntity) == 0) {
             throw new BusinessException("Add failure");
         }
         LOGGER.info("Add user UID {} by {}",
@@ -112,7 +112,7 @@ public class UserService implements UserDetailsService {
      * @param userEntity 用户
      */
     public void updateUser(UserEntity userEntity) {
-        if (userMapper.updateUser(userEntity) == 0) {
+        if (userMapper.update(userEntity) == 0) {
             throw new BusinessException("User information update failure");
         }
         userCache.remove(userEntity.getUid());

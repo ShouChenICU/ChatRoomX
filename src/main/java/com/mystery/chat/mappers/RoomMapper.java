@@ -27,7 +27,7 @@ public interface RoomMapper {
      * @param room 房间
      * @return 更新的条数
      */
-    int addRoom(@Param("room") RoomEntity room);
+    int insert(@Param("room") RoomEntity room);
 
     /**
      * 查询某人拥有的房间数量

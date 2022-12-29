@@ -52,7 +52,7 @@ public class RoomService {
             id = UIDGenerator.randomUID();
         } while (getByID(id).isPresent());
         roomEntity.setId(id).setCreateInstant(System.currentTimeMillis());
-        roomMapper.addRoom(roomEntity);
+        roomMapper.insert(roomEntity);
         memberService.addMember(new MemberEntity()
                 .setUid(userEntity.getUid())
                 .setRoomID(id)

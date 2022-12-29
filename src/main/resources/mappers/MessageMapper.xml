@@ -10,7 +10,7 @@
         <result property="instant" column="instant_"/>
     </resultMap>
 
-    <sql id="member-entity">
+    <sql id="message-entity">
         id_,
         room_id_,
         uid_,
@@ -19,6 +19,22 @@
         instant_
     </sql>
 
+    <!-- 插入一条消息 -->
+    <insert id="insert">
+        INSERT INTO t_messages
+        (<include refid="message-entity"/>)
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            #{msg.id},
+            #{msg.roomID},
+            #{msg.uid},
+            #{msg.type},
+            #{msg.content},
+            #{msg.instant},
+        </trim>
+    </insert>
+
+    <!-- 查询最大主键 -->
     <select id="getMaxID" resultType="int">
         SELECT id_
         FROM t_messages

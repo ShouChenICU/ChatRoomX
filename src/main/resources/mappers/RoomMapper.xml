@@ -18,7 +18,7 @@
     </sql>
 
     <!-- 添加房间 -->
-    <insert id="addRoom">
+    <insert id="insert">
         INSERT INTO t_rooms
         (<include refid="room_entity"/>)
         VALUES

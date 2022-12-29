@@ -35,7 +35,7 @@ public interface UserMapper {
      * @param user 用户实体
      * @return 结果
      */
-    int addUser(@Param("user") UserEntity user);
+    int insert(@Param("user") UserEntity user);
 
     /**
      * 更新用户
@@ -43,5 +43,5 @@ public interface UserMapper {
      * @param user 用户
      * @return 结果
      */
-    int updateUser(@Param("user") UserEntity user);
+    int update(@Param("user") UserEntity user);
 }

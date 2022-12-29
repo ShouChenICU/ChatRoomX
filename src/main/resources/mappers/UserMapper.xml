@@ -26,7 +26,7 @@
     </sql>
 
     <!-- 添加用户 -->
-    <insert id="addUser">
+    <insert id="insert">
         INSERT INTO t_users
         (<include refid="user_entity"/>)
         VALUES
@@ -44,7 +44,7 @@
     </insert>
 
     <!-- 更新用户 -->
-    <update id="updateUser">
+    <update id="update">
         UPDATE t_users
         <trim suffixOverrides=",">
             <if test="user.nickname != null">

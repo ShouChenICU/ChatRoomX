@@ -30,8 +30,8 @@
             <div class="ps-3 pt-3 d-flex flex-row align-items-center">
                 <img decoding="async" class="avatar" src="res/avatar.jpg" alt="avatar">
                 <div style="margin-left: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1">
-                    <span>nickname</span><br>
-                    <small title="signature">signature...</small>
+                    <span>{{me.nickname}}</span><br>
+                    <small title="signature" style="display: inline-block">{{me.signature}}</small>
                 </div>
             </div>
             <div class="ps-3 pb-3 pt-2">
@@ -60,7 +60,7 @@
             <!-- 房间列表 -->
             <div id="room-list" class="overflow-auto flex-grow-1 d-flex flex-column scrollBeautiful"
                  @scroll="loadMoreRooms(false)">
-                <div class="d-flex flex-column px-1" v-for="i in 10">
+                <div class="d-flex flex-column px-1" v-for="i in 3">
                     <div class="roomBtn">
                         <img decoding="async" src="res/avatar.jpg" alt="avatar">
                         <div>
@@ -120,7 +120,7 @@
                             <span>&nbsp;Nickname&nbsp;</span>
                             <span style="color: gray">21:26</span>
                         </small>
-                        <p>message...sadkczxhbkad</p>
+                        <p>message...</p>
                     </div>
                 </div>
             </div>
@@ -148,7 +148,16 @@
     const app = Vue.createApp({
         data: () => {
             return {
-                name: 'asdq',
+                me: {
+                    createDate: "2022-12-03 16:31:59",
+                    email: "i.c.u.996@foxmail.com",
+                    gender: "OTHER",
+                    nickname: "shouchen",
+                    role: "ROLE_USER",
+                    roleValue: "用户",
+                    signature: "123",
+                    uid: "shouchen"
+                },
                 isTempCanClick: true,
                 isSideBarShow: true,
                 isLoadRooms: false,
@@ -158,13 +167,13 @@
         methods: {
             sendMsg() {
                 alert(this.msgInput)
-                let msgList=document.getElementById('msg-list');
+                let msgList = document.getElementById('msg-list');
                 msgList.scroll(0, 0);
             },
-            loadMoreRooms(force) {
+            loadMoreRooms(isForce) {
                 if (!this.isLoadRooms) {
                     let roomList = document.getElementById('room-list');
-                    if (force || roomList.scrollHeight - roomList.clientHeight - roomList.scrollTop < 1) {
+                    if (isForce || roomList.scrollHeight - roomList.clientHeight - roomList.scrollTop < 1) {
                         console.log('active')
                     }
                 }

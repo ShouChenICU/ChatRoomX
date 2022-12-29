@@ -28,7 +28,7 @@ public interface MemberMapper {
      * @param member 成员
      * @return 更新的行数
      */
-    int addMember(@Param("member") MemberEntity member);
+    int insert(@Param("member") MemberEntity member);
 
     /**
      * 查询成员

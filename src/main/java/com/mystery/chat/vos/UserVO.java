@@ -6,7 +6,6 @@ import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -31,6 +30,7 @@ public class UserVO {
     @Size(max = 16, groups = ValidGroup.Common.class, message = "Gender length cannot exceed 16")
     private String gender;
     private String role;
+    private String roleValue;
     @Size(max = 128, message = "Signature length cannot exceed 128", groups = ValidGroup.Common.class)
     private String signature;
     private String createDate;
@@ -45,7 +45,8 @@ public class UserVO {
                 .setNickname(userEntity.getNickname())
                 .setPassword(null)
                 .setGender(userEntity.getGender())
-                .setRole(Roles.parseRole(userEntity.getRole()))
+                .setRole(userEntity.getRole())
+                .setRoleValue(Roles.parseRole(userEntity.getRole()))
                 .setSignature(userEntity.getSignature())
                 .setCreateDate(DateTimeFormatUtils.format(userEntity.getCreateInstant()));
     }
@@ -104,6 +105,15 @@ public class UserVO {
         return this;
     }
 
+    public String getRoleValue() {
+        return roleValue;
+    }
+
+    public UserVO setRoleValue(String roleValue) {
+        this.roleValue = roleValue;
+        return this;
+    }
+
     public String getSignature() {
         return signature;
     }
@@ -128,9 +138,10 @@ public class UserVO {
                 "uid='" + uid + '\'' +
                 ", email='" + email + '\'' +
                 ", nickname='" + nickname + '\'' +
-                ", password='" + password + '\'' +
+                ", password='***'" +
                 ", gender='" + gender + '\'' +
                 ", role='" + role + '\'' +
+                ", roleValue='" + roleValue + '\'' +
                 ", signature='" + signature + '\'' +
                 ", createDate='" + createDate + '\'' +
                 '}';

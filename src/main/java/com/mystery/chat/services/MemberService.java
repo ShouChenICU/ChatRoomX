@@ -68,7 +68,7 @@ public class MemberService {
      * @param memberEntity 成员
      */
     public void addMember(MemberEntity memberEntity) {
-        if (memberMapper.addMember(memberEntity) < 1) {
+        if (memberMapper.insert(memberEntity) < 1) {
             throw new BusinessException("Add member failure");
         }
         memberCache.remove(memberEntity.getUid() + memberEntity.getRoomID());

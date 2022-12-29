@@ -1,5 +1,6 @@
 package com.mystery.chat.services;
 
+import com.mystery.chat.costant.MessageTypes;
 import com.mystery.chat.entities.MessageEntity;
 import com.mystery.chat.mappers.MessageMapper;
 import com.mystery.chat.utils.DateTimeFormatUtils;
@@ -17,15 +18,23 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MessageService {
-    private final AtomicLong genKey;
+    private final AtomicLong priKey;
     private MessageMapper messageMapper;
 
     public MessageService() {
-        genKey = new AtomicLong();
+        priKey = new AtomicLong();
     }
 
-    public void sendMsg(MessageEntity messageEntity) {
-
+    /**
+     * 发送文本消息
+     *
+     * @param messageEntity 消息
+     */
+    public void sendText(MessageEntity messageEntity) {
+        messageEntity.setId(priKey.incrementAndGet())
+                .setInstant(System.currentTimeMillis())
+                .setType(MessageTypes.TEXT);
+        messageMapper.insert(messageEntity);
     }
 
     /**
@@ -46,7 +55,7 @@ public class MessageService {
     @Autowired
     public MessageService setMessageMapper(MessageMapper messageMapper) {
         this.messageMapper = messageMapper;
-        genKey.set(messageMapper.getMaxID());
+        priKey.set(messageMapper.getMaxID());
         return this;
     }
 }

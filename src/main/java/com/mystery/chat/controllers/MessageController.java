@@ -27,19 +27,18 @@ public class MessageController {
     private MessageService messageService;
 
     /**
-     * 发送消息
+     * 发送文本消息
      *
      * @param authentication authentication
      * @param message        消息
      * @return 结果
      */
     @PreAuthorize("@memberService.userIsInRoom(#authentication.getPrincipal(), #message.roomID)")
-    @PostMapping("/send")
-    public ResultVO<?> sendMsg(
+    @PostMapping("/sendText")
+    public ResultVO<?> sendText(
             Authentication authentication,
             @RequestBody @Validated MessageVO message) {
-        message.setUid((String) authentication.getPrincipal());
-        messageService.sendMsg(new MessageEntity(message));
+        messageService.sendText(new MessageEntity(message).setUid((String) authentication.getPrincipal()));
         return ResultVO.success();
     }
 
