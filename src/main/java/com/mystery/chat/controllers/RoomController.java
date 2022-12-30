@@ -7,12 +7,15 @@ import com.mystery.chat.vos.ResultVO;
 import com.mystery.chat.vos.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author shouchen
@@ -33,6 +36,17 @@ public class RoomController {
     @PreAuthorize("hasAnyRole(@roles.USER)")
     public ResultVO<RoomVO> getByID(@RequestParam String id) {
         return ResultVO.of(roomService.getRoomVOByID(id));
+    }
+
+    /**
+     * 查询房间列表
+     *
+     * @return 房间列表
+     */
+    @PostMapping("/list")
+    @PreAuthorize("hasAnyRole(@roles.USER)")
+    public ResultVO<List<RoomVO>> listRoomVOs(Authentication authentication) {
+        return ResultVO.of(roomService.listRoomVOsByUID((String) authentication.getPrincipal()));
     }
 
     /**

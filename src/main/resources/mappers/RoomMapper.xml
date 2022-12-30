@@ -41,9 +41,22 @@
     </select>
 
     <!-- 查询某人拥有的房间数量 -->
-    <select id="countByUID" resultType="java.lang.Integer">
+    <select id="countByUID" resultType="int">
         SELECT COUNT(*)
         FROM t_members
         WHERE uid_ = #{uid}
+        AND role_ = 'OWNER'
+    </select>
+
+    <!-- 查询指定用户加入的房间列表 -->
+    <select id="listRoomsByUID" resultMap="roomEntity">
+        SELECT
+        <include refid="room_entity"/>
+        FROM t_rooms AS r
+        WHERE
+        (SELECT COUNT(*)
+        FROM t_members AS m
+        WHERE m.room_id_ = r.id_
+        AND m.uid_ = #{uid}) &gt; 0
     </select>
 </mapper>

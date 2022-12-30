@@ -4,6 +4,7 @@ import com.mystery.chat.entities.RoomEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,6 +21,13 @@ public interface RoomMapper {
      * @return 房间实体
      */
     Optional<RoomEntity> getByID(@Param("id") String id);
+
+    /**
+     * 查询指定用户加入的房间列表
+     *
+     * @return 房间列表
+     */
+    List<RoomEntity> listRoomsByUID(@Param("uid") String uid);
 
     /**
      * 添加房间

@@ -30,6 +30,14 @@ public interface MessageMapper {
             @Param("size") int size);
 
     /**
+     * 查询房间的最新消息
+     *
+     * @param roomID 房间ID
+     * @return 消息
+     */
+    MessageVO latestMsgForRoom(@Param("roomID") String roomID);
+
+    /**
      * 插入一条消息
      *
      * @param msg 消息

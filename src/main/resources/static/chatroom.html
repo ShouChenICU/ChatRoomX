@@ -60,12 +60,17 @@
             <!-- 房间列表 -->
             <div id="room-list" class="overflow-auto flex-grow-1 d-flex flex-column scrollBeautiful"
                  @scroll="loadMoreRooms(false)">
-                <div class="d-flex flex-column px-1" v-for="i in 3">
-                    <div class="roomBtn">
+                <div class="d-flex flex-column px-1 pt-1" v-for="room in roomList">
+                    <!-- 房间 -->
+                    <div class="room-btn" v-bind:class="{'room-btn-active':currentRoom===room}"
+                         @click="currentRoom=room">
                         <img decoding="async" src="res/avatar.jpg" alt="avatar">
-                        <div>
-                            <span>room{{i}}</span>
-                            <small>Some message...</small>
+                        <div class="room-btn-content">
+                            <div>
+                                <span class="room-btn-title">{{room.title}}</span>
+                                <span class="room-btn-unread">2</span>
+                            </div>
+                            <small class="room-btn-msg">{{latestMsgStr(room.messages)}}</small>
                         </div>
                     </div>
                 </div>
@@ -91,7 +96,7 @@
             </div>
             <div class="d-flex align-items-center">
                 <img decoding="async" src="res/avatar.jpg" alt="avatar" class="avatar-xs">
-                <span class="ms-2">Room name</span>
+                <span class="ms-2">{{currentRoom == null ? '?' : currentRoom.title}}</span>
             </div>
             <div>
             </div>
@@ -142,7 +147,13 @@
 
 <script>
     axios.interceptors.response.use(
-        res => res,
+        res => {
+            if (res.data.code === 401) {
+                alert(res.data.error);
+                location.href = '/';
+            }
+            return res;
+        },
         err => Promise.reject(err)
     );
     const app = Vue.createApp({
@@ -158,13 +169,61 @@
                     signature: "123",
                     uid: "shouchen"
                 },
+                roomList: [
+                    {
+                        createDate: "1970-01-10 04:37:12",
+                        id: "1",
+                        introduction: "3",
+                        isPublic: true,
+                        messages: [{
+                            content: "Some message asdasxz",
+                            id: 3,
+                            instant: 1672225988232,
+                            roomID: "1",
+                            sender: "shouchen",
+                            type: "TEXT",
+                            uid: "WiSQAJYn"
+                        }],
+                        members: [
+                            {
+                                joinDate: "1970-01-01 08:00:00",
+                                label: "",
+                                nickname: "shouchen",
+                                role: "OWNER",
+                                roleValue: "",
+                                roomID: "1",
+                                uid: "WiSQAJYn"
+                            }
+                        ],
+                        title: "room"
+                    }
+                ],
                 isTempCanClick: true,
                 isSideBarShow: true,
                 isLoadRooms: false,
-                msgInput: ''
+                msgInput: '',
+                currentRoom: null
             }
         },
         methods: {
+            loadRooms() {
+                axios.post('/api/room/list')
+                    .then(res => {
+                        this.roomList = res.data.result;
+                        if (this.roomList.length > 0) {
+                            this.currentRoom = this.roomList[0];
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            latestMsgStr(msg) {
+                if (msg != null && msg.length > 0) {
+                    return msg[0].sender + ': ' + msg[0].content;
+                }
+                return '...';
+            },
             sendMsg() {
                 alert(this.msgInput)
                 let msgList = document.getElementById('msg-list');
@@ -174,7 +233,10 @@
                 if (!this.isLoadRooms) {
                     let roomList = document.getElementById('room-list');
                     if (isForce || roomList.scrollHeight - roomList.clientHeight - roomList.scrollTop < 1) {
-                        console.log('active')
+                        // this.loadRooms();
+                    }
+                    if (isForce) {
+                        this.loadRooms();
                     }
                 }
             },
@@ -228,6 +290,7 @@
                     this.sendMsg();
                 }
             }
+            this.loadRooms();
         }
     });
     app.mount('#app');

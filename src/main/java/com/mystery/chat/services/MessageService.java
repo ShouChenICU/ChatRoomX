@@ -52,6 +52,16 @@ public class MessageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 获取房间的最新消息
+     *
+     * @param roomID 房间ID
+     * @return 消息
+     */
+    public MessageVO latestMsgForRoom(String roomID) {
+        return messageMapper.latestMsgForRoom(roomID);
+    }
+
     @Autowired
     public MessageService setMessageMapper(MessageMapper messageMapper) {
         this.messageMapper = messageMapper;

@@ -22,7 +22,7 @@ public class RoomEntity {
         Objects.requireNonNull(roomVO);
         this.setTitle(roomVO.getTitle())
                 .setIntroduction(Objects.requireNonNullElse(roomVO.getIntroduction(), ""))
-                .setPublic(roomVO.isPublic());
+                .setPublic(roomVO.getIsPublic());
     }
 
     public String getId() {

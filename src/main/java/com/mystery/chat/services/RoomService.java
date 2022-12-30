@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author shouchen
@@ -24,6 +26,7 @@ public class RoomService {
     private RoomMapper roomMapper;
     private UserService userService;
     private MemberService memberService;
+    private MessageService messageService;
     private AppConfig appConfig;
 
     /**
@@ -73,7 +76,29 @@ public class RoomService {
                 .orElseThrow(() -> new BusinessException("Room not found")))
                 .setMembers(
                         memberService.listVOsByRoomID(roomID)
+                )
+                .setMessages(
+                        messageService.listMsgVOs(roomID, 0, 10)
                 );
+    }
+
+    /**
+     * 查询指定用户加入的房间列表
+     *
+     * @return 房间列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public List<RoomVO> listRoomVOsByUID(String uid) {
+        return roomMapper.listRoomsByUID(uid)
+                .stream()
+                .map(roomEntity -> new RoomVO(roomEntity)
+                        .setMembers(
+                                memberService.listVOsByRoomID(roomEntity.getId())
+                        )
+                        .setMessages(
+                                messageService.listMsgVOs(roomEntity.getId(), 0, 10)
+                        ))
+                .collect(Collectors.toList());
     }
 
     @Autowired
@@ -91,6 +116,12 @@ public class RoomService {
     @Autowired
     public RoomService setMemberService(MemberService memberService) {
         this.memberService = memberService;
+        return this;
+    }
+
+    @Autowired
+    public RoomService setMessageService(MessageService messageService) {
+        this.messageService = messageService;
         return this;
     }
 

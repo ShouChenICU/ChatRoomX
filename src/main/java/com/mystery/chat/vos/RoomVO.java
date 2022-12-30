@@ -24,6 +24,7 @@ public class RoomVO {
     private boolean isPublic;
     private String createDate;
     private List<MemberVO> members;
+    private List<MessageVO> messages;
 
     public RoomVO() {
     }
@@ -64,7 +65,7 @@ public class RoomVO {
         return this;
     }
 
-    public boolean isPublic() {
+    public boolean getIsPublic() {
         return isPublic;
     }
 
@@ -91,6 +92,15 @@ public class RoomVO {
         return this;
     }
 
+    public List<MessageVO> getMessages() {
+        return messages;
+    }
+
+    public RoomVO setMessages(List<MessageVO> messages) {
+        this.messages = messages;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "RoomVO{" +
@@ -100,6 +110,7 @@ public class RoomVO {
                 ", isPublic=" + isPublic +
                 ", createDate='" + createDate + '\'' +
                 ", members=" + members +
+                ", messages=" + messages +
                 '}';
     }
 }
