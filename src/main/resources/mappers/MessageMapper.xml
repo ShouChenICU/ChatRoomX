@@ -51,12 +51,13 @@
         m.room_id_ AS roomID,
         m.uid_ AS uid,
         u.nickname_ AS sender,
+        mem.role_ AS role,
         m.type_ AS type,
         m.content_ AS content,
         m.instant_ AS instant
         FROM t_messages AS m
-        LEFT JOIN t_users AS u
-        ON m.uid_ = u.uid_
+        LEFT JOIN t_users AS u ON m.uid_ = u.uid_
+        LEFT JOIN t_members AS mem ON mem.room_id_ = #{roomID} AND m.uid_ = mem.uid_
         WHERE m.room_id_ = #{roomID}
         <if test="instant != 0">
             AND m.instant_ &lt;= #{instant}
@@ -75,12 +76,13 @@
         m.room_id_ AS roomID,
         m.uid_ AS uid,
         u.nickname_ AS sender,
+        mem.role_ AS role,
         m.type_ AS type,
         m.content_ AS content,
         m.instant_ AS instant
         FROM t_messages AS m
-        LEFT JOIN t_users AS u
-        ON m.uid_ = u.uid_
+        LEFT JOIN t_users AS u ON m.uid_ = u.uid_
+        LEFT JOIN t_members AS mem ON mem.room_id_ = #{roomID} AND m.uid_ = mem.uid_
         WHERE m.room_id_ = #{roomID}
         ORDER BY m.instant_ DESC
         LIMIT 1

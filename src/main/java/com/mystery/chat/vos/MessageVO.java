@@ -19,6 +19,7 @@ public class MessageVO {
     private String roomID;
     private String uid;
     private String sender;
+    private String role;
     private String type;
     @NotNull(message = "Content cannot be null", groups = ValidGroup.Insert.class)
     private String content;
@@ -74,6 +75,15 @@ public class MessageVO {
         return this;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public MessageVO setRole(String role) {
+        this.role = role;
+        return this;
+    }
+
     public String getType() {
         return type;
     }
@@ -117,6 +127,7 @@ public class MessageVO {
                 ", roomID='" + roomID + '\'' +
                 ", uid='" + uid + '\'' +
                 ", sender='" + sender + '\'' +
+                ", role='" + role + '\'' +
                 ", type='" + type + '\'' +
                 ", content='" + content + '\'' +
                 ", dateTime='" + dateTime + '\'' +

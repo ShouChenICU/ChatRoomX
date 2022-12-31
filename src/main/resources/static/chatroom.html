@@ -26,7 +26,7 @@
     <div class="sideBar" id="side-bar">
         <!-- 我的信息 -->
         <div style="background: #86C166">
-            <!--            <button class="btn btn-sm float-end m-1" @click="showSideBar"><</button>-->
+            <button class="btn btn-sm float-end m-1" @click="logout">&gt;</button>
             <div class="ps-3 pt-3 d-flex flex-row align-items-center">
                 <img decoding="async" class="avatar" src="res/avatar.jpg" alt="avatar">
                 <div style="margin-left: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1">
@@ -112,9 +112,12 @@
                     <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
                     <div>
                         <small>
-                            <span style="background-color: peachpuff;border-radius: 3px;padding: 0 0.25rem">群主</span>
+                            <span v-if="msg.role==='OWNER'||msg.role==='ADMIN'"
+                                  style="border-radius: 3px;padding: 0 0.25rem"
+                                  v-bind:style="{background:msg.role==='OWNER'?'peachpuff':'skyblue'}"
+                            >{{msg.role === 'OWNER' ? '房主' : '管理员'}}</span>
                             <span>&nbsp;{{msg.sender}}&nbsp;</span>
-                            <span style="color: gray">{{msg.dateTime}}</span>
+                            <span style="color: gray">{{msg.dateTime}}&nbsp;</span>
                         </small>
                         <pre style="min-width: 0">{{msg.content}}</pre>
                     </div>
@@ -177,6 +180,7 @@
                             instant: 1672225988232,
                             roomID: "1",
                             sender: "shouchen",
+                            role: "MEMBER",
                             type: "TEXT",
                             uid: "shouchen",
                             dateTime: '16:52'
@@ -320,7 +324,10 @@
                     let msgList = document.getElementById('msg-list');
                     msgList.scroll(0, msgList.scrollHeight);
                     clearInterval(id);
-                }, 100);
+                }, 200);
+            },
+            logout() {
+                location.href = '/logout';
             }
         },
         mounted() {

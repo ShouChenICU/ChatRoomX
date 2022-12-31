@@ -1,7 +1,6 @@
 package com.mystery.chat.managers;
 
 import com.alibaba.fastjson.JSON;
-import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.services.UserService;
 import com.mystery.chat.utils.RWMap;
 import com.mystery.chat.vos.MessageVO;
@@ -14,6 +13,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * 客户WebSocket会话管理器
@@ -37,9 +37,7 @@ public class ClientWebSocketSessionManager {
         } else {
             sessionMap.put(uid, session);
             LOGGER.info("{}:{} login", uid, userService.getByUID(uid)
-                    .stream()
-                    .map(UserEntity::getNickname)
-                    .findFirst()
+                    .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
                     .orElse(""));
         }
     }
@@ -47,9 +45,7 @@ public class ClientWebSocketSessionManager {
     public void removeSession(String uid) {
         sessionMap.remove(uid);
         LOGGER.info("{}:{} logout", uid, userService.getByUID(uid)
-                .stream()
-                .map(UserEntity::getNickname)
-                .findFirst()
+                .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
                 .orElse(""));
     }
 

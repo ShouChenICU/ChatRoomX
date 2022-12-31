@@ -3,7 +3,6 @@ package com.mystery.chat.services;
 import com.mystery.chat.configures.AppConfig;
 import com.mystery.chat.costant.MemberRoles;
 import com.mystery.chat.entities.MemberEntity;
-import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.MemberMapper;
 import com.mystery.chat.utils.LRUCache;
@@ -68,9 +67,7 @@ public class MemberService {
                 .map(entity -> new MemberVO(entity)
                         .setNickname(userService
                                 .getByUID(entity.getUid())
-                                .stream()
-                                .map(UserEntity::getNickname)
-                                .findFirst()
+                                .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
                                 .orElse("")))
                 .collect(Collectors.toList());
     }

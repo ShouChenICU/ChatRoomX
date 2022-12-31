@@ -2,7 +2,6 @@ package com.mystery.chat.services;
 
 import com.mystery.chat.costant.MessageTypes;
 import com.mystery.chat.entities.MessageEntity;
-import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.managers.ClientWebSocketSessionManager;
 import com.mystery.chat.mappers.MessageMapper;
 import com.mystery.chat.utils.DateTimeFormatUtils;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,7 @@ public class MessageService {
     private final AtomicLong priKey;
     private UserService userService;
     private MessageMapper messageMapper;
+    private MemberService memberService;
     private ClientWebSocketSessionManager sessionManager;
 
     public MessageService() {
@@ -42,10 +43,13 @@ public class MessageService {
         messageMapper.insert(messageEntity);
         sessionManager.broadcastMsg(new MessageVO(messageEntity)
                 .setSender(userService.getByUID(messageEntity.getUid())
-                        .stream()
-                        .map(UserEntity::getNickname)
-                        .findFirst()
-                        .orElse("")));
+                        .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
+                        .orElse(""))
+                .setRole(memberService.get(messageEntity.getUid(), messageEntity.getRoomID())
+                        .flatMap(memberEntity -> Optional.of(memberEntity.getRole()))
+                        .orElse("")
+                )
+        );
     }
 
     /**
@@ -85,6 +89,12 @@ public class MessageService {
     public MessageService setMessageMapper(MessageMapper messageMapper) {
         this.messageMapper = messageMapper;
         priKey.set(messageMapper.getMaxID());
+        return this;
+    }
+
+    @Autowired
+    public MessageService setMemberService(MemberService memberService) {
+        this.memberService = memberService;
         return this;
     }
 

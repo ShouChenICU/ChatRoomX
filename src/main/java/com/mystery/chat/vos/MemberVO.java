@@ -1,6 +1,5 @@
 package com.mystery.chat.vos;
 
-import com.mystery.chat.costant.Roles;
 import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.MemberEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
@@ -18,7 +17,6 @@ public class MemberVO {
     private String roomID;
     private String nickname;
     private String role;
-    private String roleValue;
     private String label;
     private String joinDate;
 
@@ -29,7 +27,6 @@ public class MemberVO {
         this.setUid(memberEntity.getUid())
                 .setRoomID(memberEntity.getRoomID())
                 .setRole(memberEntity.getRole())
-                .setRoleValue(Roles.parseRole(memberEntity.getRole()))
                 .setLabel(memberEntity.getLabel())
                 .setJoinDate(DateTimeFormatUtils.format(memberEntity.getJoinInstant()));
     }
@@ -70,15 +67,6 @@ public class MemberVO {
         return this;
     }
 
-    public String getRoleValue() {
-        return roleValue;
-    }
-
-    public MemberVO setRoleValue(String roleValue) {
-        this.roleValue = roleValue;
-        return this;
-    }
-
     public String getLabel() {
         return label;
     }
@@ -104,7 +92,6 @@ public class MemberVO {
                 ", roomID='" + roomID + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", role='" + role + '\'' +
-                ", roleValue='" + roleValue + '\'' +
                 ", label='" + label + '\'' +
                 ", joinDate='" + joinDate + '\'' +
                 '}';
