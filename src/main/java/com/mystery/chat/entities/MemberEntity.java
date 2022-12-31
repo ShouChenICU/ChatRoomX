@@ -1,5 +1,7 @@
 package com.mystery.chat.entities;
 
+import com.mystery.chat.vos.MemberVO;
+
 /**
  * @author shouchen
  * @date 2022/11/27
@@ -12,6 +14,11 @@ public class MemberEntity {
     private long joinInstant;
 
     public MemberEntity() {
+    }
+
+    public MemberEntity(MemberVO memberVO) {
+        this.setUid(memberVO.getUid())
+                .setRoomID(memberVO.getRoomID());
     }
 
     public String getUid() {

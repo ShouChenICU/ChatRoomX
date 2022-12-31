@@ -61,6 +61,9 @@
         <if test="instant != 0">
             AND m.instant_ &lt;= #{instant}
         </if>
+        <if test="id != 0">
+            AND m.id_ &lt; #{id}
+        </if>
         ORDER BY m.instant_ DESC
         LIMIT #{size}
     </select>

@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="ps-3 pb-3 pt-2">
-                <span>Online: {{3}}</span>
+                <span>Online: {{'NaN'}}</span>
             </div>
         </div>
         <!--        <hr class="m-0">-->
@@ -96,7 +96,7 @@
             </div>
             <div class="d-flex align-items-center">
                 <img decoding="async" src="res/avatar.jpg" alt="avatar" class="avatar-xs">
-                <span class="ms-2">{{currentRoom == null ? '?' : currentRoom.title}}</span>
+                <span class="ms-2">{{currentRoom == null ? '' : currentRoom.title}}</span>
             </div>
             <div>
             </div>
@@ -104,36 +104,30 @@
         <!-- 聊天面板 -->
         <div id="chat-room" class="contentBody">
             <!-- 消息列表 -->
-            <div id="msg-list" class="flex-grow-1 p-2 overflow-auto scrollBeautiful d-flex flex-column-reverse"
+            <div id="msg-list" class="flex-grow-1 p-2 overflow-auto scrollBeautiful"
                  style="scroll-behavior: smooth">
-                <div class="message-left" v-for="i in 3">
+                <div class="text-center" @click="loadMoreMessages(currentRoom)">Load more.</div>
+                <div v-if="currentRoom!=null" v-for="msg in currentRoom.messages"
+                     v-bind:class="{'message-left': msg.uid!==me.uid, 'message-right': msg.uid===me.uid}">
                     <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
                     <div>
                         <small>
                             <span style="background-color: peachpuff;border-radius: 3px;padding: 0 0.25rem">群主</span>
-                            <span>&nbsp;Nickname&nbsp;</span>
-                            <span style="color: gray">21:27</span>
+                            <span>&nbsp;{{msg.sender}}&nbsp;</span>
+                            <span style="color: gray">{{msg.dateTime}}</span>
                         </small>
-                        <p>message... {{i}}</p>
-                    </div>
-                </div>
-                <div class="message-right">
-                    <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
-                    <div>
-                        <small>
-                            <span style="background-color: skyblue;border-radius: 3px;padding: 0 0.25rem">管理员</span>
-                            <span>&nbsp;Nickname&nbsp;</span>
-                            <span style="color: gray">21:26</span>
-                        </small>
-                        <p>message...</p>
+                        <pre style="min-width: 0">{{msg.content}}</pre>
                     </div>
                 </div>
             </div>
             <!-- 发送消息框 -->
             <div class="msgBar">
-                <textarea id="input" class="scrollBeautiful" v-model="msgInput"></textarea>
+                <textarea id="input" class="scrollBeautiful" v-model="msgInput"
+                          @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
-                    <button class="btn btn-sm btn-success" @click="sendMsg">Send</button>
+                    <button class="btn btn-sm btn-success" @click="sendText" v-bind:disabled="currentRoom===null"
+                    >Send
+                    </button>
                 </div>
             </div>
         </div>
@@ -151,6 +145,8 @@
             if (res.data.code === 401) {
                 alert(res.data.error);
                 location.href = '/';
+            } else if (res.data.code === 403) {
+                alert('无权操作');
             }
             return res;
         },
@@ -161,7 +157,7 @@
             return {
                 me: {
                     createDate: "2022-12-03 16:31:59",
-                    email: "i.c.u.996@foxmail.com",
+                    email: "123@qwe.com",
                     gender: "OTHER",
                     nickname: "shouchen",
                     role: "ROLE_USER",
@@ -176,13 +172,14 @@
                         introduction: "3",
                         isPublic: true,
                         messages: [{
-                            content: "Some message asdasxz",
+                            content: "message",
                             id: 3,
                             instant: 1672225988232,
                             roomID: "1",
                             sender: "shouchen",
                             type: "TEXT",
-                            uid: "WiSQAJYn"
+                            uid: "shouchen",
+                            dateTime: '16:52'
                         }],
                         members: [
                             {
@@ -202,32 +199,45 @@
                 isSideBarShow: true,
                 isLoadRooms: false,
                 msgInput: '',
-                currentRoom: null
+                currentRoom: null,
+                wSocket: null
             }
         },
         methods: {
+            loadMe() {
+                axios.post('/api/user/me')
+                    .then(res => {
+                        this.me = res.data.result;
+                    })
+            },
             loadRooms() {
                 axios.post('/api/room/list')
                     .then(res => {
                         this.roomList = res.data.result;
                         if (this.roomList.length > 0) {
                             this.currentRoom = this.roomList[0];
+                            this.msgLstScrollBottom();
                         }
-                    })
-                    .catch(err => {
-                        console.log(err);
                     })
             },
             latestMsgStr(msg) {
                 if (msg != null && msg.length > 0) {
-                    return msg[0].sender + ': ' + msg[0].content;
+                    let m = msg[msg.length - 1];
+                    return m.sender + ': ' + m.content;
                 }
                 return '...';
             },
-            sendMsg() {
-                alert(this.msgInput)
-                let msgList = document.getElementById('msg-list');
-                msgList.scroll(0, 0);
+            sendText() {
+                document.getElementById('input').focus();
+                if (this.msgInput === '') {
+                    return;
+                }
+                axios.post('/api/msg/sendText', {roomID: this.currentRoom.id, content: this.msgInput})
+                    .then(res => {
+                        this.msgInput = '';
+                        document.getElementById('input').style.height = '2rem';
+                        this.msgLstScrollBottom();
+                    });
             },
             loadMoreRooms(isForce) {
                 if (!this.isLoadRooms) {
@@ -239,6 +249,16 @@
                         this.loadRooms();
                     }
                 }
+            },
+            loadMoreMessages(room) {
+                let param = new FormData();
+                param.set('roomID', room.id);
+                param.set('id', room.messages.length > 0 ? room.messages[0].id : 0);
+                axios.post('/api/msg/list', param)
+                    .then(res => {
+                        room.messages.push(...res.data.result);
+                        room.messages.sort((a, b) => a.instant - b.instant);
+                    })
             },
             showSideBar() {
                 if (!this.isTempCanClick) {
@@ -269,6 +289,38 @@
                     }
                 }
                 this.isSideBarShow = !this.isSideBarShow;
+            },
+            connectServer() {
+                axios.post('/ping');
+                let isSecure = location.protocol === 'https:';
+                let wsProtocol = isSecure ? 'wss://' : 'ws://';
+                this.wSocket = new WebSocket(wsProtocol + location.host + '/ws/chat');
+                this.wSocket.onopen = ev => {
+                    this.loadRooms();
+                }
+                this.wSocket.onmessage = ev => {
+                    let data = JSON.parse(ev.data);
+                    if (data.type === 'MSG') {
+                        let msg = data.result;
+                        for (let room of this.roomList) {
+                            if (room.id === msg.roomID) {
+                                room.messages.push(msg);
+                                room.messages.sort((a, b) => a.instant - b.instant);
+                                if (this.currentRoom === room) {
+                                    this.msgLstScrollBottom();
+                                }
+                                return;
+                            }
+                        }
+                    }
+                }
+            },
+            msgLstScrollBottom() {
+                let id = setInterval(() => {
+                    let msgList = document.getElementById('msg-list');
+                    msgList.scroll(0, msgList.scrollHeight);
+                    clearInterval(id);
+                }, 100);
             }
         },
         mounted() {
@@ -287,10 +339,23 @@
             });
             input.onkeydown = ev => {
                 if (ev.ctrlKey && ev.code === 'Enter') {
-                    this.sendMsg();
+                    this.sendText();
                 }
             }
-            this.loadRooms();
+            let msgList = document.getElementById('msg-list');
+            msgList.onscroll = ev => {
+                if (msgList.scrollTop === 0) {
+                    this.loadMoreMessages(this.currentRoom);
+                }
+            };
+            this.loadMe();
+            this.connectServer();
+            setInterval(() => {
+                if (this.wSocket === null
+                    || this.wSocket.readyState === WebSocket.CLOSED) {
+                    this.connectServer();
+                }
+            }, 2000);
         }
     });
     app.mount('#app');

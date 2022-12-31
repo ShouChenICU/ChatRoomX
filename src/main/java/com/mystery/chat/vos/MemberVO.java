@@ -1,15 +1,20 @@
 package com.mystery.chat.vos;
 
 import com.mystery.chat.costant.Roles;
+import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.MemberEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author shouchen
  * @date 2022/12/8
  */
 public class MemberVO {
+    @NotBlank(groups = ValidGroup.Insert.class, message = "UID cannot be empty")
     private String uid;
+    @NotBlank(groups = ValidGroup.Insert.class, message = "Room ID cannot be empty")
     private String roomID;
     private String nickname;
     private String role;

@@ -21,12 +21,14 @@ public interface MessageMapper {
      *
      * @param roomID  房间ID
      * @param instant 时间戳
+     * @param id      id
      * @param size    长度
      * @return 消息列表
      */
     List<MessageVO> listMsgVOs(
             @Param("roomID") String roomID,
             @Param("instant") long instant,
+            @Param("id") long id,
             @Param("size") int size);
 
     /**

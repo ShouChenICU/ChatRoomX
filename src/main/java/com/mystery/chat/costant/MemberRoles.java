@@ -1,11 +1,16 @@
 package com.mystery.chat.costant;
 
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
 /**
  * 成员角色
  *
  * @author shouchen
  * @date 2022/12/6
  */
+@Lazy
+@Component
 public final class MemberRoles {
     /**
      * 房主

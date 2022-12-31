@@ -1,7 +1,9 @@
 package com.mystery.chat.configures;
 
-import com.mystery.chat.utils.UIDGenerator;
+import com.mystery.chat.utils.TokenUtils;
+import io.jsonwebtoken.Claims;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -12,7 +14,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Chat web socket configure
@@ -38,12 +42,16 @@ public class ChatWebSocketConfigure implements WebSocketConfigurer {
                     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
                         super.beforeHandshake(request, response, wsHandler, attributes);
                         HttpServletRequest servletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-                        String name = servletRequest.getParameter("name");
-                        attributes.put("name",
-                                name == null || name.trim().isEmpty() ?
-                                        "游客" + UIDGenerator.randomUID()
-                                        : name);
-                        return true;
+                        AtomicBoolean result = new AtomicBoolean(false);
+                        Arrays.stream(servletRequest.getCookies())
+                                .filter(cookie -> HttpHeaders.AUTHORIZATION.equalsIgnoreCase(cookie.getName()))
+                                .findFirst()
+                                .ifPresent(cookie -> {
+                                    Claims claims = TokenUtils.parseToken(cookie.getValue());
+                                    attributes.put("uid", claims.getAudience());
+                                    result.set(true);
+                                });
+                        return result.get();
                     }
                 });
     }

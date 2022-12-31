@@ -52,7 +52,7 @@ public class UserController {
      * @return 用户VO
      */
     @PostMapping(value = "/get")
-    @PreAuthorize("hasAnyRole(@roles.USER)")
+    @PreAuthorize("hasAnyRole(@roles.ALL)")
     public ResultVO<UserVO> getUserByUID(@RequestParam String uid) {
         return ResultVO.of(
                 new UserVO(userService.getByUID(uid)

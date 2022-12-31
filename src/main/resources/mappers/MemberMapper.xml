@@ -27,7 +27,7 @@
             #{member.roomID},
             #{member.role},
             #{member.label},
-            #{member.koinInstant},
+            #{member.joinInstant},
         </trim>
     </insert>
 

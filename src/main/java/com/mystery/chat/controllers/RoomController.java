@@ -33,7 +33,7 @@ public class RoomController {
      * @return 房间信息
      */
     @PostMapping("/get")
-    @PreAuthorize("hasAnyRole(@roles.USER)")
+    @PreAuthorize("hasAnyRole(@roles.ALL)")
     public ResultVO<RoomVO> getByID(@RequestParam String id) {
         return ResultVO.of(roomService.getRoomVOByID(id));
     }
@@ -44,9 +44,9 @@ public class RoomController {
      * @return 房间列表
      */
     @PostMapping("/list")
-    @PreAuthorize("hasAnyRole(@roles.USER)")
+    @PreAuthorize("hasAnyRole(@roles.ALL)")
     public ResultVO<List<RoomVO>> listRoomVOs(Authentication authentication) {
-        return ResultVO.of(roomService.listRoomVOsByUID((String) authentication.getPrincipal()));
+        return ResultVO.of(roomService.listRoomVOsByUID(authentication.getName()));
     }
 
     /**
@@ -56,7 +56,7 @@ public class RoomController {
      * @return 结果
      */
     @PostMapping("/add")
-    @PreAuthorize("hasAnyRole(@roles.USER)")
+    @PreAuthorize("hasAnyRole(@roles.ALL)")
     public ResultVO<?> addRoom(@RequestBody @Validated(ValidGroup.Insert.class) RoomVO roomVO) {
         roomService.addRoom(new RoomEntity(roomVO));
         return ResultVO.success();

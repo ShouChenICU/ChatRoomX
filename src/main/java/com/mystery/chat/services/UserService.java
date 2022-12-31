@@ -51,7 +51,7 @@ public class UserService implements UserDetailsService {
         Authentication authentication = SecurityContextHolder
                 .getContext().getAuthentication();
         if (authentication != null) {
-            return getByUID((String) authentication.getPrincipal());
+            return getByUID(authentication.getName());
         }
         return Optional.empty();
     }
@@ -101,7 +101,7 @@ public class UserService implements UserDetailsService {
                 SecurityContextHolder
                         .getContext()
                         .getAuthentication()
-                        .getPrincipal()
+                        .getName()
         );
         return uid;
     }

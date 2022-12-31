@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,13 +23,20 @@ import java.io.IOException;
 public class IndexController implements ErrorController {
     private static final String ERROR_PATH = "/error";
 
-    @GetMapping("/")
     @PermitAll
+    @GetMapping("/")
     public String indexPage(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return "login.html";
         }
         return "chatroom.html";
+    }
+
+    @PermitAll
+    @ResponseBody
+    @PostMapping("/ping")
+    public ResultVO<?> ping() {
+        return ResultVO.success();
     }
 
     @ResponseBody

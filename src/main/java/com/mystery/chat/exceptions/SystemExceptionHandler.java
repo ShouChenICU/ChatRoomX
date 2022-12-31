@@ -50,7 +50,7 @@ public class SystemExceptionHandler {
         LOGGER.warn(exception.getClass().getSimpleName() + " {} {} UID {}",
                 request.getMethod(),
                 request.getRequestURI(),
-                authentication.getPrincipal());
+                authentication.getName());
         return ResultVO.error(HttpStatus.FORBIDDEN.toString()).setCode(HttpStatus.FORBIDDEN.value());
     }
 

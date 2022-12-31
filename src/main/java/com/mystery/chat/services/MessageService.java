@@ -2,12 +2,15 @@ package com.mystery.chat.services;
 
 import com.mystery.chat.costant.MessageTypes;
 import com.mystery.chat.entities.MessageEntity;
+import com.mystery.chat.entities.UserEntity;
+import com.mystery.chat.managers.ClientWebSocketSessionManager;
 import com.mystery.chat.mappers.MessageMapper;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 import com.mystery.chat.vos.MessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -19,7 +22,9 @@ import java.util.stream.Collectors;
 @Service
 public class MessageService {
     private final AtomicLong priKey;
+    private UserService userService;
     private MessageMapper messageMapper;
+    private ClientWebSocketSessionManager sessionManager;
 
     public MessageService() {
         priKey = new AtomicLong();
@@ -35,6 +40,12 @@ public class MessageService {
                 .setInstant(System.currentTimeMillis())
                 .setType(MessageTypes.TEXT);
         messageMapper.insert(messageEntity);
+        sessionManager.broadcastMsg(new MessageVO(messageEntity)
+                .setSender(userService.getByUID(messageEntity.getUid())
+                        .stream()
+                        .map(UserEntity::getNickname)
+                        .findFirst()
+                        .orElse("")));
     }
 
     /**
@@ -42,13 +53,15 @@ public class MessageService {
      *
      * @param roomID  房间ID
      * @param instant 时间戳
+     * @param id      id
      * @param size    长度
      * @return 消息列表
      */
-    public List<MessageVO> listMsgVOs(String roomID, long instant, int size) {
-        return messageMapper.listMsgVOs(roomID, instant, size)
+    public List<MessageVO> listMsgVOs(String roomID, long instant, long id, int size) {
+        return messageMapper.listMsgVOs(roomID, instant, id, size)
                 .stream()
                 .map(msg -> msg.setDateTime(DateTimeFormatUtils.formatMsg(msg.getInstant())))
+                .sorted(Comparator.comparingLong(MessageVO::getInstant))
                 .collect(Collectors.toList());
     }
 
@@ -63,9 +76,21 @@ public class MessageService {
     }
 
     @Autowired
+    public MessageService setUserService(UserService userService) {
+        this.userService = userService;
+        return this;
+    }
+
+    @Autowired
     public MessageService setMessageMapper(MessageMapper messageMapper) {
         this.messageMapper = messageMapper;
         priKey.set(messageMapper.getMaxID());
+        return this;
+    }
+
+    @Autowired
+    public MessageService setSessionManager(ClientWebSocketSessionManager sessionManager) {
+        this.sessionManager = sessionManager;
         return this;
     }
 }

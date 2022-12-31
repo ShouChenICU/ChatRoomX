@@ -33,12 +33,12 @@ public class MessageController {
      * @param message        消息
      * @return 结果
      */
-    @PreAuthorize("@memberService.userIsInRoom(#authentication.getPrincipal(), #message.roomID)")
+    @PreAuthorize("@memberService.userIsInRoom(#authentication.getName(), #message.roomID)")
     @PostMapping("/sendText")
     public ResultVO<?> sendText(
             Authentication authentication,
             @RequestBody @Validated MessageVO message) {
-        messageService.sendText(new MessageEntity(message).setUid((String) authentication.getPrincipal()));
+        messageService.sendText(new MessageEntity(message).setUid(authentication.getName()));
         return ResultVO.success();
     }
 
@@ -51,12 +51,13 @@ public class MessageController {
      * @param size           列表长度
      * @return 消息列表
      */
-    @PreAuthorize("hasAnyRole(@roles.ADMIN) || @memberService.userIsInRoom(#authentication.getPrincipal(), #roomID)")
+    @PreAuthorize("hasAnyRole(@roles.ADMIN) || @memberService.userIsInRoom(#authentication.getName(), #roomID)")
     @PostMapping("/list")
-    public List<MessageVO> listMessages(
+    public ResultVO<List<MessageVO>> listMessages(
             Authentication authentication,
             @RequestParam String roomID,
             @RequestParam(defaultValue = "0") long instant,
+            @RequestParam(defaultValue = "0") long id,
             @RequestParam(defaultValue = "10") int size) {
         if (instant < 0) {
             instant = 0;
@@ -66,7 +67,7 @@ public class MessageController {
         } else if (size > 100) {
             throw new BusinessException("List size cannot exceed 100");
         }
-        return messageService.listMsgVOs(roomID, instant, size);
+        return ResultVO.of(messageService.listMsgVOs(roomID, instant, id, size));
     }
 
     @Autowired
