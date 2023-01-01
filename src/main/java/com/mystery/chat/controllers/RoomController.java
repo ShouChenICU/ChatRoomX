@@ -58,8 +58,7 @@ public class RoomController {
     @PostMapping("/add")
     @PreAuthorize("hasAnyRole(@roles.ALL)")
     public ResultVO<?> addRoom(@RequestBody @Validated(ValidGroup.Insert.class) RoomVO roomVO) {
-        roomService.addRoom(new RoomEntity(roomVO));
-        return ResultVO.success();
+        return ResultVO.of(roomService.addRoom(new RoomEntity(roomVO)));
     }
 
     @Autowired

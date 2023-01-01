@@ -45,7 +45,7 @@ public class RoomService {
      * @param roomEntity 房间
      */
     @Transactional(rollbackFor = Exception.class)
-    public void addRoom(RoomEntity roomEntity) {
+    public String addRoom(RoomEntity roomEntity) {
         UserEntity userEntity = userService.me().orElseThrow(() -> new BusinessException("User not found"));
         if (roomMapper.countByUID(userEntity.getUid()) >= appConfig.maxRoomsForUser) {
             throw new BusinessException("You have created the maximum number of " + appConfig.maxRoomsForUser + " rooms");
@@ -62,6 +62,7 @@ public class RoomService {
                 .setRole(MemberRoles.OWNER)
                 .setLabel("")
                 .setJoinInstant(System.currentTimeMillis()));
+        return id;
     }
 
     /**

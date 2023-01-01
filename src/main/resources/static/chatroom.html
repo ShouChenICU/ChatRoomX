@@ -63,7 +63,7 @@
                 <div class="d-flex flex-column px-1 pt-1" v-for="room in roomList">
                     <!-- 房间 -->
                     <div class="room-btn" v-bind:class="{'room-btn-active':currentRoom===room}"
-                         @click="currentRoom=room">
+                         @click="()=>{this.currentRoom=room;msgLstScrollBottom()}">
                         <img decoding="async" src="res/avatar.jpg" alt="avatar">
                         <div class="room-btn-content">
                             <div>
@@ -104,7 +104,7 @@
         <!-- 聊天面板 -->
         <div id="chat-room" class="contentBody">
             <!-- 消息列表 -->
-            <div id="msg-list" class="flex-grow-1 p-2 overflow-auto scrollBeautiful"
+            <div id="msg-list" class="message-list scrollBeautiful"
                  style="scroll-behavior: smooth">
                 <div class="text-center" @click="loadMoreMessages(currentRoom)">Load more.</div>
                 <div v-if="currentRoom!=null" v-for="msg in currentRoom.messages"
@@ -175,14 +175,14 @@
                         introduction: "3",
                         isPublic: true,
                         messages: [{
-                            content: "message",
+                            content: "messagemessagemessagemessagemessagemessagemessagemessage",
                             id: 3,
                             instant: 1672225988232,
                             roomID: "1",
                             sender: "shouchen",
                             role: "MEMBER",
                             type: "TEXT",
-                            uid: "shouchen",
+                            uid: "shouchen1",
                             dateTime: '16:52'
                         }],
                         members: [
@@ -281,7 +281,7 @@
                         template.style.height = '0';
                         this.isTempCanClick = true;
                         clearInterval(id);
-                    }, 1000);
+                    }, 750);
                 } else {
                     sideBar.style.left = '0'
                     if (document.body.clientWidth < 768) {

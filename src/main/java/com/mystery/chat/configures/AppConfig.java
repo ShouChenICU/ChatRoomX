@@ -15,4 +15,6 @@ public class AppConfig {
     public int maxRoomsForUser;
     @Value("${userCacheSize:255}")
     public int userCacheSize;
+    @Value("${broadcastThreadPollSize:16}")
+    public int broadcastThreadPollSize;
 }

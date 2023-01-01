@@ -67,7 +67,7 @@ public class MemberService {
                 .map(entity -> new MemberVO(entity)
                         .setNickname(userService
                                 .getByUID(entity.getUid())
-                                .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
+                                .flatMap(userEntity -> Optional.ofNullable(userEntity.getNickname()))
                                 .orElse("")))
                 .collect(Collectors.toList());
     }

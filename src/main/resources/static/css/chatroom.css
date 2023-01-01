@@ -52,7 +52,7 @@
     justify-content: space-between;
     align-content: center;
     padding: 0.5rem 0.5rem 0.5rem 0;
-    background-image: linear-gradient(160deg, #58B2DC, #FEDFE1);
+    background-image: linear-gradient(160deg, lightskyblue, #b8aedc, lightpink);
     z-index: 1;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
@@ -85,6 +85,13 @@
     resize: none;
 }
 
+.message-list {
+    padding: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
 .message-left {
     display: flex;
     flex-direction: row;
@@ -96,6 +103,7 @@
     border-radius: 5px;
     padding: 0.25rem 0.5rem;
     word-break: break-all;
+    white-space: pre-wrap;
     margin: 0.25rem 0 0 0;
 }
 
@@ -117,6 +125,7 @@
     border-radius: 5px;
     padding: 0.25rem 0.5rem;
     word-break: break-all;
+    white-space: pre-wrap;
     margin: 0.25rem 0 0 0;
 }
 
@@ -169,7 +178,7 @@
 }
 
 .room-btn-active {
-    box-shadow: 0 0 3px deepskyblue;
+    box-shadow: 0 0 3px forestgreen;
 }
 
 .room-btn:hover {

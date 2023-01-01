@@ -43,10 +43,10 @@ public class MessageService {
         messageMapper.insert(messageEntity);
         sessionManager.broadcastMsg(new MessageVO(messageEntity)
                 .setSender(userService.getByUID(messageEntity.getUid())
-                        .flatMap(userEntity -> Optional.of(userEntity.getNickname()))
+                        .flatMap(userEntity -> Optional.ofNullable(userEntity.getNickname()))
                         .orElse(""))
                 .setRole(memberService.get(messageEntity.getUid(), messageEntity.getRoomID())
-                        .flatMap(memberEntity -> Optional.of(memberEntity.getRole()))
+                        .flatMap(memberEntity -> Optional.ofNullable(memberEntity.getRole()))
                         .orElse("")
                 )
         );
