@@ -13,12 +13,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +36,7 @@ public class ClientWebSocketSessionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ClientWebSocketSessionManager.class);
     private final RWMap<String, WebSocketSession> sessionMap;
     private final RWMap<String, RWList<WebSocketSession>> roomSessionMap;
+    private final ScheduledThreadPoolExecutor timerExecutor;
     private final ThreadPoolExecutor executor;
     private UserService userService;
     private MemberService memberService;
@@ -40,34 +44,64 @@ public class ClientWebSocketSessionManager {
     public ClientWebSocketSessionManager(AppConfig appConfig) {
         sessionMap = new RWMap<>();
         roomSessionMap = new RWMap<>();
+        timerExecutor = new ScheduledThreadPoolExecutor(1);
         executor = new ThreadPoolExecutor(appConfig.broadcastThreadPollSize,
                 appConfig.broadcastThreadPollSize,
                 0,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(appConfig.broadcastThreadPollSize * 4),
-                r -> {
-                    Thread thread = new Thread(r);
-                    thread.setDaemon(true);
-                    return thread;
-                },
                 new ThreadPoolExecutor.CallerRunsPolicy()
         );
     }
 
     public void putSession(String uid, WebSocketSession session) throws Exception {
-        if (sessionMap.containsKey(uid)) {
-            session.close();
-        } else {
-            sessionMap.put(uid, session);
-            roomSessionMap.forEach((roomID, rwList) -> {
-                if (memberService.userIsInRoom(uid, roomID)) {
-                    rwList.add(session);
-                }
-            });
-            LOGGER.info("{}:{} login", uid, userService.getByUID(uid)
-                    .flatMap(userEntity -> Optional.ofNullable(userEntity.getNickname()))
-                    .orElse("???"));
+        synchronized (sessionMap) {
+            if (sessionMap.containsKey(uid)) {
+                // 该用户已连接，则断开该连接，禁止二次登陆
+                executor.execute(() -> {
+                    try {
+                        session.sendMessage(new TextMessage(
+                                JSON.toJSONString(ResultVO.error("Can not re-login"))
+                        ));
+                        session.close(CloseStatus.NOT_ACCEPTABLE);
+                    } catch (IOException e) {
+                        LOGGER.warn("", e);
+                    }
+                });
+                return;
+            } else {
+                // 正常连接
+                sessionMap.put(uid, session);
+                // 心跳检测 和 超时检测
+                heartTest(session);
+            }
         }
+        roomSessionMap.forEach((roomID, rwList) -> {
+            if (memberService.userIsInRoom(uid, roomID)) {
+                rwList.add(session);
+            }
+        });
+        LOGGER.info("{}:{} login", uid, userService.getByUID(uid)
+                .flatMap(userEntity -> Optional.ofNullable(userEntity.getNickname()))
+                .orElse("???"));
+    }
+
+    private void heartTest(WebSocketSession session) {
+        timerExecutor.schedule(() -> {
+            try {
+                long now = System.currentTimeMillis();
+                long expire = (long) session.getAttributes().get("expire");
+                long heartBeat = (long) session.getAttributes().get("heart-beat");
+                if (now > expire || now > heartBeat + TimeUnit.SECONDS.toMillis(24)) {
+                    session.close();
+                    return;
+                }
+                session.sendMessage(new PingMessage());
+                heartTest(session);
+            } catch (IOException e) {
+                LOGGER.warn("", e);
+            }
+        }, 10, TimeUnit.SECONDS);
     }
 
     public void removeSession(String uid) {
@@ -76,6 +110,10 @@ public class ClientWebSocketSessionManager {
         LOGGER.info("{}:{} logout", uid, userService.getByUID(uid)
                 .flatMap(userEntity -> Optional.ofNullable(userEntity.getNickname()))
                 .orElse("???"));
+    }
+
+    public Optional<WebSocketSession> getSession(String uid) {
+        return Optional.ofNullable(sessionMap.get(uid));
     }
 
     public boolean contents(String uid) {
@@ -93,6 +131,9 @@ public class ClientWebSocketSessionManager {
     }
 
     public void broadcastMsg(MessageVO messageVO) {
+        TextMessage msg = new TextMessage(JSON.toJSONString(
+                ResultVO.of(messageVO).setType("MSG")
+        ));
         executor.execute(() -> roomSessionMap.computeIfAbsent(messageVO.getRoomID(),
                         roomID -> {
                             RWList<WebSocketSession> list = new RWList<>();
@@ -105,10 +146,7 @@ public class ClientWebSocketSessionManager {
                         })
                 .forEach(session -> executor.execute(() -> {
                     try {
-                        session.sendMessage(new TextMessage(JSON.toJSONString(
-                                ResultVO.of(messageVO)
-                                        .setType("MSG")
-                        )));
+                        session.sendMessage(msg);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

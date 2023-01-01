@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,7 +95,7 @@ public class RoomService {
                 .stream()
                 .map(roomEntity -> new RoomVO(roomEntity)
                         .setMembers(
-                                memberService.listVOsByRoomID(roomEntity.getId())
+                                new ArrayList<>(0)
                         )
                         .setMessages(
                                 messageService.listMsgVOs(roomEntity.getId(), 0, 0, 10)

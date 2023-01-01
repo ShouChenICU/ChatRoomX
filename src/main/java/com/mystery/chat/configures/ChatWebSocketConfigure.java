@@ -49,6 +49,8 @@ public class ChatWebSocketConfigure implements WebSocketConfigurer {
                                 .ifPresent(cookie -> {
                                     Claims claims = TokenUtils.parseToken(cookie.getValue());
                                     attributes.put("uid", claims.getAudience());
+                                    attributes.put("expire", claims.getExpiration().getTime());
+                                    attributes.put("heart-beat", System.currentTimeMillis());
                                     result.set(true);
                                 });
                         return result.get();

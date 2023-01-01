@@ -106,7 +106,10 @@
             <!-- 消息列表 -->
             <div id="msg-list" class="message-list scrollBeautiful"
                  style="scroll-behavior: smooth">
-                <div class="text-center" @click="loadMoreMessages(currentRoom)">Load more.</div>
+                <div class="text-center pb-2" @click="loadMoreMessages(currentRoom)">
+                    {{isLoadingMoreMsg ? 'Loading' : 'Load more'}}
+                    <i v-if="isLoadingMoreMsg" class="spinner-border spinner-border-sm text-muted"></i>
+                </div>
                 <div v-if="currentRoom!=null" v-for="msg in currentRoom.messages"
                      v-bind:class="{'message-left': msg.uid!==me.uid, 'message-right': msg.uid===me.uid}">
                     <img src="res/avatar.jpg" alt="avatar" class="avatar-sm">
@@ -128,7 +131,8 @@
                 <textarea id="input" class="scrollBeautiful" v-model="msgInput"
                           @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
-                    <button class="btn btn-sm btn-success" @click="sendText" v-bind:disabled="currentRoom===null"
+                    <button class="btn btn-sm btn-success" @click="sendText"
+                            v-bind:disabled="currentRoom===null||isSendingMsg"
                     >Send
                     </button>
                 </div>
@@ -175,7 +179,7 @@
                         introduction: "3",
                         isPublic: true,
                         messages: [{
-                            content: "messagemessagemessagemessagemessagemessagemessagemessage",
+                            content: "message",
                             id: 3,
                             instant: 1672225988232,
                             roomID: "1",
@@ -202,9 +206,11 @@
                 isTempCanClick: true,
                 isSideBarShow: true,
                 isLoadRooms: false,
+                isSendingMsg: false,
                 msgInput: '',
                 currentRoom: null,
-                wSocket: null
+                wSocket: null,
+                isLoadingMoreMsg: false
             }
         },
         methods: {
@@ -220,6 +226,7 @@
                         this.roomList = res.data.result;
                         if (this.roomList.length > 0) {
                             this.currentRoom = this.roomList[0];
+                            this.isLoadingMoreMsg = false;
                             this.msgLstScrollBottom();
                         }
                     })
@@ -233,15 +240,18 @@
             },
             sendText() {
                 document.getElementById('input').focus();
-                if (this.msgInput === '') {
+                if (this.isSendingMsg || this.msgInput === '') {
                     return;
                 }
+                this.isSendingMsg = true;
                 axios.post('/api/msg/sendText', {roomID: this.currentRoom.id, content: this.msgInput})
                     .then(res => {
                         this.msgInput = '';
                         document.getElementById('input').style.height = '2rem';
+                        this.isSendingMsg = false;
                         this.msgLstScrollBottom();
-                    });
+                    })
+                    .catch(err => this.isSendingMsg = false);
             },
             loadMoreRooms(isForce) {
                 if (!this.isLoadRooms) {
@@ -255,6 +265,10 @@
                 }
             },
             loadMoreMessages(room) {
+                if (this.isLoadingMoreMsg) {
+                    return;
+                }
+                this.isLoadingMoreMsg = true;
                 let param = new FormData();
                 param.set('roomID', room.id);
                 param.set('id', room.messages.length > 0 ? room.messages[0].id : 0);
@@ -262,7 +276,11 @@
                     .then(res => {
                         room.messages.push(...res.data.result);
                         room.messages.sort((a, b) => a.instant - b.instant);
+                        this.isLoadingMoreMsg = false;
+                        let msgList = document.getElementById('msg-list');
+                        msgList.scrollTo(0, 1);
                     })
+                    .catch(err => this.isLoadingMoreMsg = false);
             },
             showSideBar() {
                 if (!this.isTempCanClick) {
@@ -304,20 +322,38 @@
                 }
                 this.wSocket.onmessage = ev => {
                     let data = JSON.parse(ev.data);
-                    if (data.type === 'MSG') {
+                    if (data.code !== 200) {
+                        alert(data.error);
+                        location.href = '/logout';
+                    } else if (data.type === 'MSG') {
                         let msg = data.result;
                         for (let room of this.roomList) {
                             if (room.id === msg.roomID) {
                                 room.messages.push(msg);
                                 room.messages.sort((a, b) => a.instant - b.instant);
                                 if (this.currentRoom === room) {
-                                    this.msgLstScrollBottom();
+                                    let msgList = document.getElementById('msg-list');
+                                    if (msgList.scrollHeight - msgList.clientHeight - msgList.scrollTop <= 100) {
+                                        if (room.messages.length > 64) {
+                                            room.messages.splice(0, room.messages.length - 64);
+                                        }
+                                        this.msgLstScrollBottom();
+                                    }
+                                } else if (room.messages.length > 64) {
+                                    room.messages.splice(0, room.messages.length - 64);
                                 }
                                 return;
                             }
                         }
                     }
                 }
+                let id = setInterval(() => {
+                    if (this.wSocket === null
+                        || this.wSocket.readyState === WebSocket.CLOSED) {
+                        clearInterval(id);
+                        this.connectServer();
+                    }
+                }, 2000);
             },
             msgLstScrollBottom() {
                 let id = setInterval(() => {
@@ -357,12 +393,6 @@
             };
             this.loadMe();
             this.connectServer();
-            setInterval(() => {
-                if (this.wSocket === null
-                    || this.wSocket.readyState === WebSocket.CLOSED) {
-                    this.connectServer();
-                }
-            }, 2000);
         }
     });
     app.mount('#app');
