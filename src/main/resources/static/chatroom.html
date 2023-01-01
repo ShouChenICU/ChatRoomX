@@ -132,8 +132,8 @@
                           @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
                     <button class="btn btn-sm btn-success" @click="sendText"
-                            v-bind:disabled="currentRoom===null||isSendingMsg"
-                    >Send
+                            v-bind:disabled="currentRoom===null||isSendingMsg||input===''"
+                    >Send<i v-if="isSendingMsg" class="spinner-grow spinner-grow-sm"></i>
                     </button>
                 </div>
             </div>
@@ -225,7 +225,21 @@
                     .then(res => {
                         this.roomList = res.data.result;
                         if (this.roomList.length > 0) {
-                            this.currentRoom = this.roomList[0];
+                            if (this.currentRoom == null) {
+                                this.currentRoom = this.roomList[0];
+                            } else {
+                                let flag = true;
+                                for (let room of this.roomList) {
+                                    if (room.id === this.currentRoom.id) {
+                                        this.currentRoom = room;
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    this.currentRoom = this.roomList[0];
+                                }
+                            }
                             this.isLoadingMoreMsg = false;
                             this.msgLstScrollBottom();
                         }
@@ -246,10 +260,14 @@
                 this.isSendingMsg = true;
                 axios.post('/api/msg/sendText', {roomID: this.currentRoom.id, content: this.msgInput})
                     .then(res => {
-                        this.msgInput = '';
-                        document.getElementById('input').style.height = '2rem';
-                        this.isSendingMsg = false;
-                        this.msgLstScrollBottom();
+                        if (res.data.code === 200) {
+                            this.msgInput = '';
+                            document.getElementById('input').style.height = '2rem';
+                            this.isSendingMsg = false;
+                            this.msgLstScrollBottom();
+                        } else {
+                            alert(res.data.error());
+                        }
                     })
                     .catch(err => this.isSendingMsg = false);
             },
