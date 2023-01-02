@@ -131,7 +131,7 @@
                 <textarea id="input" class="scrollBeautiful" v-model="msgInput"
                           @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
-                    <button class="btn btn-sm btn-success" @click="sendText"
+                    <button class="btn btn-sm btn-success" @click="sendText" style="padding: 0 0.5rem"
                             v-bind:disabled="currentRoom===null||isSendingMsg||input===''"
                     >Send<i v-if="isSendingMsg" class="spinner-grow spinner-grow-sm"></i>
                     </button>
@@ -142,6 +142,13 @@
     </div>
 
     <div id="template" class="template" @click="showSideBar">
+    </div>
+
+    <div v-if="isConnectingServer" class="template-loading d-flex align-items-center justify-content-center">
+        <div class="d-flex align-items-center"
+             style="border-radius: 11px;background: white;padding: 1rem;font-size: 1.25rem">
+            <span>Connecting server...&emsp;</span><i class="spinner-border text-muted"></i>
+        </div>
     </div>
 </div>
 </body>
@@ -210,7 +217,8 @@
                 msgInput: '',
                 currentRoom: null,
                 wSocket: null,
-                isLoadingMoreMsg: false
+                isLoadingMoreMsg: false,
+                isConnectingServer: true
             }
         },
         methods: {
@@ -331,12 +339,14 @@
                 this.isSideBarShow = !this.isSideBarShow;
             },
             connectServer() {
+                this.isConnectingServer = true;
                 axios.post('/ping');
                 let isSecure = location.protocol === 'https:';
                 let wsProtocol = isSecure ? 'wss://' : 'ws://';
                 this.wSocket = new WebSocket(wsProtocol + location.host + '/ws/chat');
                 this.wSocket.onopen = ev => {
                     this.loadRooms();
+                    this.isConnectingServer = false;
                 }
                 this.wSocket.onmessage = ev => {
                     let data = JSON.parse(ev.data);
@@ -370,6 +380,8 @@
                         || this.wSocket.readyState === WebSocket.CLOSED) {
                         clearInterval(id);
                         this.connectServer();
+                    } else if (this.wSocket.readyState === WebSocket.OPEN) {
+                        this.isConnectingServer = false;
                     }
                 }, 2000);
             },
