@@ -131,9 +131,9 @@
                 <textarea id="input" class="scrollBeautiful" v-model="msgInput"
                           @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
-                    <button class="btn btn-sm btn-success" @click="sendText" style="padding: 0 0.5rem"
+                    <button class="btn btn-sm btn-success" @click="sendText" style="border-radius: 13px"
                             v-bind:disabled="currentRoom===null||isSendingMsg||input===''"
-                    >Send<i v-if="isSendingMsg" class="spinner-grow spinner-grow-sm"></i>
+                    ><img src="res/send.svg" style="width: 1.5rem;height: 1.5rem"/>
                     </button>
                 </div>
             </div>

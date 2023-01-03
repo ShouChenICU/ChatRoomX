@@ -1,5 +1,6 @@
 package com.mystery.chat.controllers;
 
+import com.mystery.chat.costant.MemberRoles;
 import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.MemberEntity;
 import com.mystery.chat.services.MemberService;
@@ -40,7 +41,10 @@ public class MemberController {
     public ResultVO<?> addMember(
             Authentication authentication,
             @RequestBody @Validated(ValidGroup.Insert.class) MemberVO memberVO) {
-        memberService.addMember(new MemberEntity(memberVO));
+        memberService.addMember(
+                new MemberEntity(memberVO)
+                        .setLabel("")
+                        .setRole(MemberRoles.MEMBER));
         return ResultVO.success();
     }
 

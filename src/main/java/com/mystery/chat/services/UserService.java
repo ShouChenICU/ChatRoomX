@@ -1,16 +1,17 @@
 package com.mystery.chat.services;
 
-import com.mystery.chat.configures.AppConfig;
 import com.mystery.chat.costant.AccountStatus;
 import com.mystery.chat.costant.Roles;
 import com.mystery.chat.entities.UserEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.UserMapper;
-import com.mystery.chat.utils.LRUCache;
 import com.mystery.chat.utils.UIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -31,15 +32,14 @@ import java.util.Optional;
  * @date 2022/11/27
  */
 @Service
+@CacheConfig(cacheNames = "USER_CACHE")
 public class UserService implements UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final PasswordEncoder passwordEncoder;
-    private final LRUCache<String, Optional<UserEntity>> userCache;
     private UserMapper userMapper;
 
-    public UserService(PasswordEncoder passwordEncoder, AppConfig appConfig) {
+    public UserService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-        this.userCache = new LRUCache<>(appConfig.userCacheSize);
     }
 
     /**
@@ -62,10 +62,9 @@ public class UserService implements UserDetailsService {
      * @param uid uid
      * @return 用户
      */
+    @Cacheable(key = "#uid")
     public Optional<UserEntity> getByUID(String uid) {
-        return userCache.getElsePut(uid,
-                () -> userMapper.getByUID(uid)
-        );
+        return userMapper.getByUID(uid);
     }
 
     /**
@@ -111,11 +110,11 @@ public class UserService implements UserDetailsService {
      *
      * @param userEntity 用户
      */
+    @CacheEvict(key = "#userEntity.uid")
     public void updateUser(UserEntity userEntity) {
         if (userMapper.update(userEntity) == 0) {
             throw new BusinessException("User information update failure");
         }
-        userCache.remove(userEntity.getUid());
     }
 
     @Override

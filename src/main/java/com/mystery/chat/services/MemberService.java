@@ -1,13 +1,13 @@
 package com.mystery.chat.services;
 
-import com.mystery.chat.configures.AppConfig;
 import com.mystery.chat.costant.MemberRoles;
 import com.mystery.chat.entities.MemberEntity;
 import com.mystery.chat.exceptions.BusinessException;
 import com.mystery.chat.mappers.MemberMapper;
-import com.mystery.chat.utils.LRUCache;
 import com.mystery.chat.vos.MemberVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,14 +21,10 @@ import java.util.stream.Collectors;
  * @date 2022/12/8
  */
 @Service
+@CacheConfig(cacheNames = "MEMBER_CACHE")
 public class MemberService {
-    private final LRUCache<String, Optional<MemberEntity>> memberCache;
     private MemberMapper memberMapper;
     private UserService userService;
-
-    public MemberService(AppConfig appConfig) {
-        memberCache = new LRUCache<>(appConfig.userCacheSize);
-    }
 
     /**
      * 查询房间成员
@@ -37,9 +33,9 @@ public class MemberService {
      * @param roomID 房间ID
      * @return 成员
      */
+    @Cacheable(key = "#uid = #roomID")
     public Optional<MemberEntity> get(String uid, String roomID) {
-        return memberCache.getElsePut(uid + roomID,
-                () -> memberMapper.get(uid, roomID));
+        return memberMapper.get(uid, roomID);
     }
 
     /**
@@ -78,13 +74,10 @@ public class MemberService {
      * @param memberEntity 成员
      */
     public void addMember(MemberEntity memberEntity) {
-        memberEntity.setRole(MemberRoles.MEMBER)
-                .setLabel("")
-                .setJoinInstant(System.currentTimeMillis());
+        memberEntity.setRole(MemberRoles.MEMBER).setJoinInstant(System.currentTimeMillis());
         if (memberMapper.insert(memberEntity) < 1) {
             throw new BusinessException("Add member failure");
         }
-        memberCache.remove(memberEntity.getUid() + memberEntity.getRoomID());
     }
 
     /**
