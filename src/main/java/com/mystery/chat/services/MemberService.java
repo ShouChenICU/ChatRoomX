@@ -33,7 +33,7 @@ public class MemberService {
      * @param roomID 房间ID
      * @return 成员
      */
-    @Cacheable(key = "#uid = #roomID")
+    @Cacheable(key = "#uid + #roomID")
     public Optional<MemberEntity> get(String uid, String roomID) {
         return memberMapper.get(uid, roomID);
     }
@@ -74,7 +74,7 @@ public class MemberService {
      * @param memberEntity 成员
      */
     public void addMember(MemberEntity memberEntity) {
-        memberEntity.setRole(MemberRoles.MEMBER).setJoinInstant(System.currentTimeMillis());
+        memberEntity.setJoinInstant(System.currentTimeMillis());
         if (memberMapper.insert(memberEntity) < 1) {
             throw new BusinessException("Add member failure");
         }

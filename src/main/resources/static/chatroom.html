@@ -132,7 +132,7 @@
                           @click="msgLstScrollBottom"></textarea>
                 <div class="ms-2 d-flex flex-column-reverse">
                     <button class="btn btn-sm btn-success" @click="sendText" style="border-radius: 13px"
-                            v-bind:disabled="currentRoom===null||isSendingMsg||input===''"
+                            v-bind:disabled="currentRoom===null||isSendingMsg||msgInput===''"
                     ><img src="res/send.svg" style="width: 1.5rem;height: 1.5rem"/>
                     </button>
                 </div>

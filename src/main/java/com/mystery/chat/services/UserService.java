@@ -68,6 +68,16 @@ public class UserService implements UserDetailsService {
     }
 
     /**
+     * 根据邮箱查询用户
+     *
+     * @param email 用户邮箱
+     * @return 用户
+     */
+    public Optional<UserEntity> getByEmail(String email) {
+        return userMapper.getByEmail(email);
+    }
+
+    /**
      * 添加用户
      *
      * @param userEntity 用户实体
