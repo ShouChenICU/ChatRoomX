@@ -26,7 +26,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         sessionManager.putSession((String) session.getAttributes().get("uid"), session);
-
         session.sendMessage(new PingMessage());
     }
 

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -144,7 +145,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Autowired
-    public UserService setUserMapper(UserMapper userMapper) {
+    public UserService setUserMapper(@Lazy UserMapper userMapper) {
         this.userMapper = userMapper;
         return this;
     }

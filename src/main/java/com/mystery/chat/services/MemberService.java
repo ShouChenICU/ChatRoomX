@@ -8,6 +8,7 @@ import com.mystery.chat.vos.MemberVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 public class MemberService {
     private MemberMapper memberMapper;
     private UserService userService;
+    private RoomService roomService;
 
     /**
      * 查询房间成员
@@ -74,6 +76,8 @@ public class MemberService {
      * @param memberEntity 成员
      */
     public void addMember(MemberEntity memberEntity) {
+        userService.getByUID(memberEntity.getUid()).orElseThrow(() -> new BusinessException("User not found"));
+        roomService.getByID(memberEntity.getRoomID()).orElseThrow(() -> new BusinessException("Room not found"));
         memberEntity.setJoinInstant(System.currentTimeMillis());
         if (memberMapper.insert(memberEntity) < 1) {
             throw new BusinessException("Add member failure");
@@ -113,14 +117,20 @@ public class MemberService {
     }
 
     @Autowired
-    public MemberService setMemberMapper(MemberMapper memberMapper) {
+    public MemberService setMemberMapper(@Lazy MemberMapper memberMapper) {
         this.memberMapper = memberMapper;
         return this;
     }
 
     @Autowired
-    public MemberService setUserService(UserService userService) {
+    public MemberService setUserService(@Lazy UserService userService) {
         this.userService = userService;
+        return this;
+    }
+
+    @Autowired
+    public MemberService setRoomService(@Lazy RoomService roomService) {
+        this.roomService = roomService;
         return this;
     }
 }

@@ -7,6 +7,7 @@ import com.mystery.chat.mappers.MessageMapper;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 import com.mystery.chat.vos.MessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -80,26 +81,26 @@ public class MessageService {
     }
 
     @Autowired
-    public MessageService setUserService(UserService userService) {
+    public MessageService setUserService(@Lazy UserService userService) {
         this.userService = userService;
         return this;
     }
 
     @Autowired
-    public MessageService setMessageMapper(MessageMapper messageMapper) {
+    public MessageService setMessageMapper(@Lazy MessageMapper messageMapper) {
         this.messageMapper = messageMapper;
         priKey.set(messageMapper.getMaxID());
         return this;
     }
 
     @Autowired
-    public MessageService setMemberService(MemberService memberService) {
+    public MessageService setMemberService(@Lazy MemberService memberService) {
         this.memberService = memberService;
         return this;
     }
 
     @Autowired
-    public MessageService setSessionManager(ClientWebSocketSessionManager sessionManager) {
+    public MessageService setSessionManager(@Lazy ClientWebSocketSessionManager sessionManager) {
         this.sessionManager = sessionManager;
         return this;
     }

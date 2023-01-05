@@ -10,6 +10,7 @@ import com.mystery.chat.mappers.RoomMapper;
 import com.mystery.chat.utils.UIDGenerator;
 import com.mystery.chat.vos.RoomVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,31 +105,31 @@ public class RoomService {
     }
 
     @Autowired
-    public RoomService setRoomMapper(RoomMapper roomMapper) {
+    public RoomService setRoomMapper(@Lazy RoomMapper roomMapper) {
         this.roomMapper = roomMapper;
         return this;
     }
 
     @Autowired
-    public RoomService setUserService(UserService userService) {
+    public RoomService setUserService(@Lazy UserService userService) {
         this.userService = userService;
         return this;
     }
 
     @Autowired
-    public RoomService setMemberService(MemberService memberService) {
+    public RoomService setMemberService(@Lazy MemberService memberService) {
         this.memberService = memberService;
         return this;
     }
 
     @Autowired
-    public RoomService setMessageService(MessageService messageService) {
+    public RoomService setMessageService(@Lazy MessageService messageService) {
         this.messageService = messageService;
         return this;
     }
 
     @Autowired
-    public RoomService setAppConfig(AppConfig appConfig) {
+    public RoomService setAppConfig(@Lazy AppConfig appConfig) {
         this.appConfig = appConfig;
         return this;
     }

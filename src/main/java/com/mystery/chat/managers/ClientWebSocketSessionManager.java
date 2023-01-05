@@ -19,6 +19,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -49,7 +50,7 @@ public class ClientWebSocketSessionManager {
                 appConfig.broadcastThreadPollSize,
                 0,
                 TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(appConfig.broadcastThreadPollSize * 4),
+                new LinkedBlockingQueue<>(appConfig.broadcastThreadPollSize * 32),
                 new ThreadPoolExecutor.CallerRunsPolicy()
         );
     }
@@ -131,10 +132,13 @@ public class ClientWebSocketSessionManager {
     }
 
     public void broadcastMsg(MessageVO messageVO) {
+        Objects.requireNonNull(messageVO);
         TextMessage msg = new TextMessage(JSON.toJSONString(
                 ResultVO.of(messageVO).setType("MSG")
         ));
-        executor.execute(() -> roomSessionMap.computeIfAbsent(messageVO.getRoomID(),
+
+        executor.execute(() -> roomSessionMap
+                .computeIfAbsent(messageVO.getRoomID(),
                         roomID -> {
                             RWList<WebSocketSession> list = new RWList<>();
                             sessionMap.forEach((uid, session) -> {

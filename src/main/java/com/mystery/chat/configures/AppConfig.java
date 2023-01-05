@@ -17,4 +17,6 @@ public class AppConfig {
     public int userCacheSize;
     @Value("${broadcastThreadPollSize:16}")
     public int broadcastThreadPollSize;
+    @Value("${globalRoomMaxMsgCount:128}")
+    public int globalRoomMaxMsgCount;
 }
