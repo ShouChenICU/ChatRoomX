@@ -187,7 +187,6 @@
                         isPublic: true,
                         messages: [{
                             content: "message",
-                            id: 3,
                             instant: 1672225988232,
                             roomID: "1",
                             sender: "shouchen",
@@ -297,7 +296,7 @@
                 this.isLoadingMoreMsg = true;
                 let param = new FormData();
                 param.set('roomID', room.id);
-                param.set('id', room.messages.length > 0 ? room.messages[0].id : 0);
+                param.set('instant', room.messages.length > 0 ? room.messages[0].instant : 0);
                 axios.post('/api/msg/list', param)
                     .then(res => {
                         room.messages.push(...res.data.result);

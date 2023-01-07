@@ -81,7 +81,7 @@ public class RoomService {
                         memberService.listVOsByRoomID(roomID)
                 )
                 .setMessages(
-                        messageService.listMsgVOs(roomID, 0, 0, 10)
+                        messageService.listMsgVOs(roomID, 0, 10)
                 );
     }
 
@@ -99,7 +99,7 @@ public class RoomService {
                                 new ArrayList<>(0)
                         )
                         .setMessages(
-                                messageService.listMsgVOs(roomEntity.getId(), 0, 0, 10)
+                                messageService.listMsgVOs(roomEntity.getId(), 0, 10)
                         ))
                 .collect(Collectors.toList());
     }

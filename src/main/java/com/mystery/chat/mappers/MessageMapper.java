@@ -14,21 +14,17 @@ import java.util.List;
 @Mapper
 public interface MessageMapper {
 
-    int getMaxID();
-
     /**
      * 列出消息列表
      *
-     * @param roomID  房间ID
      * @param instant 时间戳
-     * @param id      id
+     * @param roomID  房间ID
      * @param size    长度
      * @return 消息列表
      */
     List<MessageVO> listMsgVOs(
-            @Param("roomID") String roomID,
             @Param("instant") long instant,
-            @Param("id") long id,
+            @Param("roomID") String roomID,
             @Param("size") int size);
 
     /**

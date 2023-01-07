@@ -2,21 +2,19 @@
 
 <mapper namespace="com.mystery.chat.mappers.MessageMapper">
     <resultMap id="memberEntity" type="com.mystery.chat.entities.MessageEntity">
-        <result property="id" column="id_"/>
+        <result property="instant" column="instant_"/>
         <result property="roomID" column="room_id_"/>
         <result property="uid" column="uid_"/>
         <result property="type" column="type_"/>
         <result property="content" column="content_"/>
-        <result property="instant" column="instant_"/>
     </resultMap>
 
     <sql id="message-entity">
-        id_,
+        instant_,
         room_id_,
         uid_,
         type_,
-        content_,
-        instant_
+        content_
     </sql>
 
     <!-- 插入一条消息 -->
@@ -25,29 +23,17 @@
         (<include refid="message-entity"/>)
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            #{msg.id},
+            #{msg.instant},
             #{msg.roomID},
             #{msg.uid},
             #{msg.type},
             #{msg.content},
-            #{msg.instant},
         </trim>
     </insert>
-
-    <!-- 查询最大主键 -->
-    <select id="getMaxID" resultType="int">
-        SELECT id_
-        FROM t_messages
-        UNION
-        SELECT 0 AS id_
-        ORDER BY id_ DESC
-        LIMIT 1
-    </select>
 
     <!-- 查询消息列表 -->
     <select id="listMsgVOs" resultType="com.mystery.chat.vos.MessageVO">
         SELECT
-        m.id_ AS id,
         m.room_id_ AS roomID,
         m.uid_ AS uid,
         u.nickname_ AS sender,
@@ -60,10 +46,7 @@
         LEFT JOIN t_members AS mem ON mem.room_id_ = #{roomID} AND m.uid_ = mem.uid_
         WHERE m.room_id_ = #{roomID}
         <if test="instant != 0">
-            AND m.instant_ &lt;= #{instant}
-        </if>
-        <if test="id != 0">
-            AND m.id_ &lt; #{id}
+            AND m.instant_ &lt; #{instant}
         </if>
         ORDER BY m.instant_ DESC
         LIMIT #{size}
@@ -72,7 +55,6 @@
     <!-- 查询房间的最新消息 -->
     <select id="latestMsgForRoom" resultType="com.mystery.chat.vos.MessageVO">
         SELECT
-        m.id_ AS id,
         m.room_id_ AS roomID,
         m.uid_ AS uid,
         u.nickname_ AS sender,

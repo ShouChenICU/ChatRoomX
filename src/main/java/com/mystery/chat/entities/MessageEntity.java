@@ -9,12 +9,11 @@ import com.mystery.chat.vos.MessageVO;
  * @date 2022/11/24
  */
 public class MessageEntity {
-    private long id;
+    private long instant;
     private String roomID;
     private String uid;
     private String type;
     private String content;
-    private long instant;
 
     public MessageEntity() {
     }
@@ -23,15 +22,6 @@ public class MessageEntity {
         this.setRoomID(messageVO.getRoomID())
                 .setType(messageVO.getType())
                 .setContent(messageVO.getContent());
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public MessageEntity setId(long id) {
-        this.id = id;
-        return this;
     }
 
     public String getRoomID() {
@@ -82,7 +72,6 @@ public class MessageEntity {
     @Override
     public String toString() {
         return "MessageEntity{" +
-                "id=" + id +
                 ", roomID='" + roomID + '\'' +
                 ", uid='" + uid + '\'' +
                 ", type='" + type + '\'' +

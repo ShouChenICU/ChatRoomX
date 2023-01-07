@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 31/12/2022 09:46:29
+ Date: 07/01/2023 15:29:45
 */
 
 PRAGMA foreign_keys = false;
@@ -33,13 +33,12 @@ CREATE TABLE "t_members" (
 -- ----------------------------
 DROP TABLE IF EXISTS "t_messages";
 CREATE TABLE "t_messages" (
-  "id_" INTEGER NOT NULL,
-  "room_id_" TEXT NOT NULL,
-  "uid_" TEXT NOT NULL,
-  "type_" TEXT NOT NULL DEFAULT '',
-  "content_" TEXT NOT NULL DEFAULT '',
   "instant_" INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY ("id_")
+  "room_id_" TEXT NOT NULL DEFAULT 0,
+  "uid_" TEXT NOT NULL DEFAULT 0,
+  "type_" TEXT NOT NULL DEFAULT 0,
+  "content_" TEXT NOT NULL DEFAULT '',
+  PRIMARY KEY ("instant_", "room_id_", "uid_")
 );
 
 -- ----------------------------

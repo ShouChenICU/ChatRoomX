@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -22,14 +21,12 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MessageService {
-    private final AtomicLong priKey;
     private UserService userService;
     private MessageMapper messageMapper;
     private MemberService memberService;
     private ClientWebSocketSessionManager sessionManager;
 
     public MessageService() {
-        priKey = new AtomicLong();
     }
 
     /**
@@ -38,8 +35,7 @@ public class MessageService {
      * @param messageEntity 消息
      */
     public void sendText(MessageEntity messageEntity) {
-        messageEntity.setId(priKey.incrementAndGet())
-                .setInstant(System.currentTimeMillis())
+        messageEntity.setInstant(System.currentTimeMillis())
                 .setType(MessageTypes.TEXT);
         messageMapper.insert(messageEntity);
         sessionManager.broadcastMsg(new MessageVO(messageEntity)
@@ -56,14 +52,13 @@ public class MessageService {
     /**
      * 查询消息列表
      *
-     * @param roomID  房间ID
      * @param instant 时间戳
-     * @param id      id
+     * @param roomID  房间ID
      * @param size    长度
      * @return 消息列表
      */
-    public List<MessageVO> listMsgVOs(String roomID, long instant, long id, int size) {
-        return messageMapper.listMsgVOs(roomID, instant, id, size)
+    public List<MessageVO> listMsgVOs(String roomID, long instant, int size) {
+        return messageMapper.listMsgVOs(instant, roomID, size)
                 .stream()
                 .map(msg -> msg.setDateTime(DateTimeFormatUtils.formatMsg(msg.getInstant())))
                 .sorted(Comparator.comparingLong(MessageVO::getInstant))
@@ -89,7 +84,6 @@ public class MessageService {
     @Autowired
     public MessageService setMessageMapper(@Lazy MessageMapper messageMapper) {
         this.messageMapper = messageMapper;
-        priKey.set(messageMapper.getMaxID());
         return this;
     }
 

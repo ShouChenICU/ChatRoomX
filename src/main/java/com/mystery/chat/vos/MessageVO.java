@@ -4,7 +4,6 @@ import com.mystery.chat.costant.ValidGroup;
 import com.mystery.chat.entities.MessageEntity;
 import com.mystery.chat.utils.DateTimeFormatUtils;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -14,8 +13,7 @@ import javax.validation.constraints.NotNull;
  * @date 2022/11/23
  */
 public class MessageVO {
-    private long id;
-    @NotBlank(message = "Room id cannot be empty", groups = ValidGroup.Insert.class)
+    private long instant;
     private String roomID;
     private String uid;
     private String sender;
@@ -24,28 +22,17 @@ public class MessageVO {
     @NotNull(message = "Content cannot be null", groups = ValidGroup.Insert.class)
     private String content;
     private String dateTime;
-    private long instant;
 
     public MessageVO() {
     }
 
     public MessageVO(MessageEntity entity) {
-        this.setId(entity.getId())
+        this.setInstant(entity.getInstant())
                 .setRoomID(entity.getRoomID())
                 .setUid(entity.getUid())
                 .setType(entity.getType())
                 .setContent(entity.getContent())
-                .setDateTime(DateTimeFormatUtils.formatMsg(entity.getInstant()))
-                .setInstant(entity.getInstant());
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public MessageVO setId(long id) {
-        this.id = id;
-        return this;
+                .setDateTime(DateTimeFormatUtils.formatMsg(entity.getInstant()));
     }
 
     public String getRoomID() {
@@ -123,7 +110,7 @@ public class MessageVO {
     @Override
     public String toString() {
         return "MessageVO{" +
-                "id=" + id +
+                "instant=" + instant +
                 ", roomID='" + roomID + '\'' +
                 ", uid='" + uid + '\'' +
                 ", sender='" + sender + '\'' +
@@ -131,7 +118,6 @@ public class MessageVO {
                 ", type='" + type + '\'' +
                 ", content='" + content + '\'' +
                 ", dateTime='" + dateTime + '\'' +
-                ", instant=" + instant +
                 '}';
     }
 }

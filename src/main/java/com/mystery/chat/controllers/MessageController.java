@@ -57,7 +57,6 @@ public class MessageController {
             Authentication authentication,
             @RequestParam String roomID,
             @RequestParam(defaultValue = "0") long instant,
-            @RequestParam(defaultValue = "0") long id,
             @RequestParam(defaultValue = "10") int size) {
         if (instant < 0) {
             instant = 0;
@@ -67,7 +66,7 @@ public class MessageController {
         } else if (size > 100) {
             throw new BusinessException("List size cannot exceed 100");
         }
-        return ResultVO.of(messageService.listMsgVOs(roomID, instant, id, size));
+        return ResultVO.of(messageService.listMsgVOs(roomID, instant, size));
     }
 
     @Autowired
