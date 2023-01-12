@@ -136,7 +136,6 @@ public class ClientWebSocketSessionManager {
         TextMessage msg = new TextMessage(JSON.toJSONString(
                 ResultVO.of(messageVO).setType("MSG")
         ));
-
         executor.execute(() -> roomSessionMap
                 .computeIfAbsent(messageVO.getRoomID(),
                         roomID -> {

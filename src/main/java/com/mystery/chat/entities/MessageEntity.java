@@ -20,7 +20,6 @@ public class MessageEntity {
 
     public MessageEntity(MessageVO messageVO) {
         this.setRoomID(messageVO.getRoomID())
-                .setType(messageVO.getType())
                 .setContent(messageVO.getContent());
     }
 
